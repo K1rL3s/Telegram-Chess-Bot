@@ -1,0 +1,25 @@
+from enum import Enum
+
+
+class CallbackData(Enum):
+    OPEN_MAIN_MENU = 'open_main_menu'
+    OPEN_GAME_MENU = 'open_game_menu'
+    OPEN_RULES_HELP = 'open_rules_help'
+    OPEN_SETTINGS = 'open_settings'
+    ABOUT_BOT = 'about_bot'
+    RESET_ALL_SETTINGS = 'reset_all_settings'
+    RESET_ALL_SETTINGS_SURE = 'reset_all_settings_sure'
+    START_EDIT_SETTING = 'start_edit_setting_'
+    RESET_SETTING = 'reset_setting_'
+    STOP_EDIT_SETTING = 'stop_edit_setting'
+    EDIT_MIN_TIME = 'edit_min_time'
+    EDIT_MAX_TIME = 'edit_max_time'
+    EDIT_THREADS = 'edit_threads'
+    EDIT_DEPTH = 'edit_depth'
+    EDIT_RAM_HASH = 'edit_ram_hash'
+    EDIT_SKILL_LEVEL = 'edit_skill_level'
+    EDIT_ELO = 'edit_elo'
+    EDIT_COLORS = 'edit_colors'
+    EDIT_WITH_COORDS = 'edit_with_coords'
+    EDIT_WITH_POSITION_EVALUATION = 'edit_with_position_evaluation'
+    EDIT_SIZE = 'edit_size'
