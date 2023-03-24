@@ -26,11 +26,11 @@ def requests_catch(func):
                 f'Ошибка API "{function_name}": {e.__class__.__module__}.{e.__class__.__qualname__}: {e}'
             )
             raise CancelHandler()
-        except CancelHandler as e:
-            logger.error(
-                f'Ошибка TG "{function_name}": {args=}  |  {kwargs=}'
-            )
-            raise e
+        # except CancelHandler as e:
+        #     logger.error(
+        #         f'Ошибка TG CancelHandler "{function_name}": {args=}  |  {kwargs=}'
+        #     )
+        #     raise e
     return wrapper
 
 

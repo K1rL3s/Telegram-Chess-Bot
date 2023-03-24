@@ -12,13 +12,20 @@ API_URL = os.getenv('API_URL')
 
 @logger_wraps()
 @requests_catch
-def get_board_image(fen: str, last_move: str, check: str | None, **params) -> BytesIO | None:
+def get_board_image(
+        *,
+        fen: str,
+        last_move: str | None = None,
+        check: str | None = None,
+        orientation: str = 'w',
+        **params) -> BytesIO:
     """
     Возвращает изображение текущей позиции на доске.
 
     :param fen: Текущая позиция в FEN.
     :param last_move: Последний сделанный ход.
     :param check: Клетка с шахом, если такая есть.
+    :param orientation: Цвет игрока.
     :param params: Остальные ключевые аргументы, такие как "coords", "colors".
     :return: BytesIO PNG.
     """
@@ -30,6 +37,7 @@ def get_board_image(fen: str, last_move: str, check: str | None, **params) -> By
         "last_move": last_move,
         "check": check,
         "size": size,
+        "orientation": orientation,
         **params
     }
 

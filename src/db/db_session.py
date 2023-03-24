@@ -29,7 +29,7 @@ def global_init(db_file: str | Path):
     engine = sqlalchemy.create_engine(conn_str, echo=False)
     __factory = sessionmaker(bind=engine)
 
-    from . import __all_models  # noqa
+    from src.db import __all_models  # noqa
 
     SqlAlchemyBase.metadata.create_all(engine)
 

@@ -23,3 +23,8 @@ class LoggingMiddleware(MyBaseMiddleware):
         logger.debug(
             f'Получено сообщение "{" ".join(message.text.splitlines())}" [{self.get_short_info(message)}]'
         )
+
+    async def on_post_process_message(self, message: types.Message, result, data: dict):
+        logger.debug(
+            f'Отработано сообщение "{" ".join(message.text.splitlines())}" [{self.get_short_info(message)}]'
+        )

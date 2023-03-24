@@ -6,8 +6,8 @@ from src.chess_api.get_limits import get_limits, get_defaults
 from src.db.settings import Settings
 from src.tg.consts import CallbackData
 from src.tg.keyboards import (
-    settings_keyboard, edit_setting_keyboard,
-    cancel_edit_setting_keyboard, after_edit_settings_keyboard, are_you_sure_reset_settings_keyboard
+    settings_keyboard, edit_setting_keyboard, cancel_edit_setting_keyboard,
+    are_you_sure_reset_settings_keyboard, go_to_main_menu_settings_game_keyboard
 )
 from src.tg.utils.db_funcs import get_settings, update_settings
 
@@ -21,17 +21,50 @@ class EditSetting(StatesGroup):
 
 # Перевод параметра настроек на русский
 attr_to_ru_with_description = {
-    "min_time": ("Мин. время (мс)", "Минимальное время движка на подумать"),
-    "max_time": ("Макс. время (мс)", "Максимальное время движка на подумать"),
-    "threads": ("Потоки", "Количество потоков процессора движка"),
-    "depth": ("Глубина", "Глубина просчёта ходов движка"),
-    "ram_hash": ("Память (МБ)", "Количество оперативной памяти движка"),
-    "skill_level": ("Уровень игры", "Уровень игры движка"),
-    "elo": ("ЭЛО", "ЭЛО движка"),
-    "colors": ("Цвета доски", "Цвета клеток, координат доски"),
-    "with_coords": ("Координаты", "С координатами поле или без"),
-    "with_position_evaluation": ("Оценка", "Оценивать ли позицию после каждого хода"),
-    "size": ("Размер (пискели)", "Размер изображения доски, которое присылает бот после своего хода")
+    "min_time": (
+        "Мин. время (мс)",
+        "Минимальное время движка на подумать"
+    ),
+    "max_time": (
+        "Макс. время (мс)",
+        "Максимальное время движка на подумать"
+    ),
+    "threads": (
+        "Потоки",
+        "Количество потоков процессора движка\nЧем больше, тем движок сильнее"
+    ),
+    "depth": (
+        "Глубина",
+        "Глубина просчёта ходов движка\nЧем больше, тем движок сильнее"
+    ),
+    "ram_hash": (
+        "Память (МБ)",
+        "Количество оперативной памяти движка\nЧем больше, тем движок сильнее"
+    ),
+    "skill_level": (
+        "Уровень игры",
+        "Уровень игры движка\nЧем больше, тем движок сильнее"
+    ),
+    "elo": (
+        "ЭЛО",
+        "ЭЛО движка\nЧем больше, тем движок сильнее"
+    ),
+    "colors": (
+        "Цвета доски",
+        "Цвета клеток, координат доски\nМеняет изображение доски"
+    ),
+    "with_coords": (
+        "Координаты",
+        "С координатами поле или без\nМеняет изображение доски"
+    ),
+    "with_position_evaluation": (
+        "Оценка",
+        "Оценивать ли позицию после каждого хода\nУвеличивает время ответа!"
+    ),
+    "size": (
+        "Размер (пискели)",
+        "Размер изображения доски, которое присылает бот после своего хода\nМеняет изображение доски"
+    )
 }
 
 edit_setting_message = f"""
@@ -213,7 +246,7 @@ async def reset_current_setting(callback: types.CallbackQuery):
     name = attr_to_ru_with_description[attr][0]
     await callback.message.reply(
             succes_edit_message(name, format_settings_value(new_value, limit=0)),
-            reply_markup=after_edit_settings_keyboard,
+            reply_markup=go_to_main_menu_settings_game_keyboard,
             parse_mode='markdown'
         )
 
@@ -288,7 +321,7 @@ async def edit_setting(message: types.Message, state: FSMContext, text: str = No
         new_value = update_settings(message.from_user.id, **{attr: value})[attr]
         await message.reply(
             succes_edit_message(name, format_settings_value(new_value, limit=0)),
-            reply_markup=after_edit_settings_keyboard,
+            reply_markup=go_to_main_menu_settings_game_keyboard,
             parse_mode='markdown'
         )
 
@@ -304,7 +337,7 @@ async def cancel_state_edit_setting(callback: types.CallbackQuery, state: FSMCon
         attr = data["attr"]
     await callback.message.reply(
         f'Изменение *"{attr_to_ru_with_description[attr][0]}"* отменено',
-        reply_markup=after_edit_settings_keyboard,
+        reply_markup=go_to_main_menu_settings_game_keyboard,
         parse_mode='markdown'
     )
     await state.finish()
@@ -316,17 +349,18 @@ async def reset_all_settings(callback: types.CallbackQuery):
     """
 
     is_sure = callback.data.replace(CallbackData.RESET_ALL_SETTINGS.value, '')
-    if is_sure:
-        update_settings(callback.from_user.id, **get_defaults())
-        await callback.message.reply(
-            "Настройки сброшены на значения по умолчанию",
-            reply_markup=after_edit_settings_keyboard
-        )
-    else:
+    if not is_sure:
         await callback.message.reply(
             "Вы уверены, что хотите сбросить все настройки на значения по умолчанию?",
             reply_markup=are_you_sure_reset_settings_keyboard
         )
+        return
+
+    update_settings(callback.from_user.id, **get_defaults())
+    await callback.message.reply(
+        "Настройки сброшены на значения по умолчанию",
+        reply_markup=go_to_main_menu_settings_game_keyboard
+    )
 
 
 def register_settings(dp: Dispatcher):

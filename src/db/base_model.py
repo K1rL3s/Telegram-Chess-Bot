@@ -1,6 +1,6 @@
 from sqlalchemy.orm.exc import DetachedInstanceError
 
-from .db_session import SqlAlchemyBase
+from src.db.db_session import SqlAlchemyBase
 
 
 class BaseModel(SqlAlchemyBase):

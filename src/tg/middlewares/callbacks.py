@@ -8,5 +8,6 @@ class CallbackQueryMiddleware(MyBaseMiddleware):
     Мидлварь, который отвечает на callback query за меня.
     """
 
-    async def on_post_process_callback_query(self, callback: types.CallbackQuery, result, data: dict):
+    @staticmethod
+    async def on_post_process_callback_query(callback: types.CallbackQuery, result, data: dict):
         await callback.answer()

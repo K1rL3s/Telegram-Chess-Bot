@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import String, Integer, DateTime, Column, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
-from .base_model import BaseModel
+from src.db.base_model import BaseModel
 
 
 start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -15,7 +15,9 @@ class Game(BaseModel):
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     orientation = Column(String, nullable=False)
-    prev_moves = Column(String, default='', nullable=False)  # ?
+    prev_moves = Column(String)
+    last_move = Column(String)
+    check = Column(String)
     fen = Column(String, default=start_fen, nullable=False)
     who_win = Column(String, default=None)
     created_time = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
@@ -31,6 +33,8 @@ class Game(BaseModel):
             user_id=self.user_id,
             orientation=self.orientation,
             prev_moves=self.prev_moves,
+            last_move=self.last_move,
+            check=self.check,
             fen=self.fen,
             who_win=self.who_win,
             created_time=self.created_time,

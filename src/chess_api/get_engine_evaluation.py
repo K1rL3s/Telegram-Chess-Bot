@@ -2,6 +2,7 @@ import os
 
 import requests
 
+from src.chess_api.dataclasses import EngineEvaluation
 from src.utils.decorators import requests_catch, logger_wraps
 from src.tg.utils.abort import abort
 
@@ -10,12 +11,17 @@ API_URL = os.getenv('API_URL')
 
 @logger_wraps()
 @requests_catch
-def get_engine_evaluation(*, fen: str | None = None, prev_moves: str | None = None):
+def get_engine_evaluation(
+        *,
+        fen: str | None = None,
+        prev_moves: str | None = None
+) -> EngineEvaluation:
     """
     Возвращает оценку позиции в сантипешках или ходов до мата.
 
     :param fen: Текущая позиция в FEN.
     :param prev_moves: История ходов в партии.
+    :return: Мощный намедтупле с ответом сервера.
     """
 
     if not fen and not prev_moves:
@@ -29,4 +35,4 @@ def get_engine_evaluation(*, fen: str | None = None, prev_moves: str | None = No
     if not response:
         return abort(response.json()["message"])
 
-    return ...
+    return EngineEvaluation(**response.json()["response"])

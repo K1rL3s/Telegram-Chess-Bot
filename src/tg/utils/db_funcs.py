@@ -1,8 +1,7 @@
-from types import NoneType
-
 import sqlalchemy as sa
 
 from src.chess_api import get_engine_evaluation, get_limits
+from src.chess_api.dataclasses import EngineEvaluation
 from src.db.db_session import create_session
 from src.db.__all_models import User, Settings, Game
 
@@ -24,7 +23,7 @@ def create_new_user(user_id: int) -> None:
     db_sess.commit()
 
 
-def create_new_game(user_id: int, orientation: str) -> Game:
+def create_new_game(user_id: int, orientation: str) -> None:
     """
     Создаёт новую игру, останавливая, если есть, старую.
 
@@ -45,8 +44,6 @@ def create_new_game(user_id: int, orientation: str) -> Game:
     )
     db_sess.add(game)
     db_sess.commit()
-
-    return game
 
 
 def get_user(user_id: int) -> User | None:
@@ -91,7 +88,7 @@ def get_current_game(user_id: int) -> Game:
     return db_sess.scalar(query)
 
 
-def stop_current_game(user_id: int) -> dict | None:
+def stop_current_game(user_id: int) -> EngineEvaluation | None:
     """
     Останавливает текущую игру и возвращает оценку позиции от движка.
 
@@ -105,10 +102,10 @@ def stop_current_game(user_id: int) -> dict | None:
         return None
 
     evaluation = get_engine_evaluation(fen=current_game.fen)
-    if evaluation["is_end"]:
-        who_win = evaluation["who_win"]
-    elif evaluation["end_type"] == "checkmate":
-        who_win = 'w' if evaluation["value"] > 0 else 'b'
+    if evaluation.is_end:
+        who_win = evaluation.who_win
+    elif evaluation.end_type == "checkmate":
+        who_win = 'w' if evaluation.value > 0 else 'b'
     else:
         who_win = None
 
@@ -140,18 +137,27 @@ def stop_current_game(user_id: int) -> dict | None:
     return evaluation
 
 
-def update_current_game(user_id: int, prev_moves: str, fen: str) -> bool:
+def update_current_game(
+        user_id: int,
+        *,
+        prev_moves: str,
+        last_move: str,
+        check: str | None,
+        fen: str,
+) -> bool | None:
     """
     Обновляет текущую игру.
 
     :param user_id: Юзер айди.
     :param prev_moves: Новая история ходов.
+    :param last_move: Последний ход.
+    :param check: Клетка с шахом.
     :param fen: FEN позиция.
-    :return: True если обновил, False если игры нет.
+    :return: True если обновил, False если закончилась, None если игры нет.
     """
 
     if not get_current_game(user_id):
-        return False
+        return None
 
     db_sess = create_session()
     query = sa.update(Game).where(
@@ -159,7 +165,9 @@ def update_current_game(user_id: int, prev_moves: str, fen: str) -> bool:
         Game.is_active == True  # noqa
     ).values(
         prev_moves=prev_moves,
-        fen=fen
+        fen=fen,
+        last_move=last_move,
+        check=check,
     )
     db_sess.execute(query)
     db_sess.commit()

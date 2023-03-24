@@ -3,8 +3,8 @@ import datetime
 from sqlalchemy import Integer, DateTime, Column, Boolean, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from .base_model import BaseModel
-from ..chess_api.get_limits import get_defaults
+from src.db.base_model import BaseModel
+from src.chess_api.get_limits import get_defaults
 
 
 class Settings(BaseModel):
@@ -32,6 +32,22 @@ class Settings(BaseModel):
         defaults = get_defaults()
         defaults.update(kwargs)
         super(Settings, self).__init__(**defaults)
+
+    def get_params(self) -> dict:
+        return {
+            "min_time": self.min_time,
+            "max_time": self.max_time,
+            "threads": self.threads,
+            "depth": self.depth,
+            "ram_hash": self.ram_hash,
+            "skill_level": self.skill_level,
+            "elo": self.elo,
+            "with_coords": self.with_coords,
+            "colors": self.colors,
+            "with_position_evaluation": self.with_position_evaluation,
+            "with_engine": True,
+            "size": self.size
+        }
 
     def __repr__(self):
         return self._repr(

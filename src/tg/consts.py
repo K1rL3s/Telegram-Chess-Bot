@@ -6,9 +6,11 @@ class CallbackData(Enum):
     OPEN_GAME_MENU = 'open_game_menu'
     OPEN_RULES_HELP = 'open_rules_help'
     OPEN_SETTINGS = 'open_settings'
+    OPEN_STATISTIC = 'open_statistic'
     ABOUT_BOT = 'about_bot'
+
     RESET_ALL_SETTINGS = 'reset_all_settings'
-    RESET_ALL_SETTINGS_SURE = 'reset_all_settings_sure'
+    RESET_ALL_SETTINGS_SURE = RESET_ALL_SETTINGS + '_sure'  # noqa
     START_EDIT_SETTING = 'start_edit_setting_'
     RESET_SETTING = 'reset_setting_'
     STOP_EDIT_SETTING = 'stop_edit_setting'
@@ -23,3 +25,14 @@ class CallbackData(Enum):
     EDIT_WITH_COORDS = 'edit_with_coords'
     EDIT_WITH_POSITION_EVALUATION = 'edit_with_position_evaluation'
     EDIT_SIZE = 'edit_size'
+
+    PLAY_OLD_GAME = 'play_old_game'
+    PLAY_NEW_GAME = 'play_new_game'
+    CHOOSE_COLOR_PREFIX = 'choose_color_'
+    COLOR_WHITE = CHOOSE_COLOR_PREFIX + 'w'  # noqa
+    COLOR_BLACK = CHOOSE_COLOR_PREFIX + 'b'  # noqa
+
+    GAME_STATE_PREFIX = 'state_game_'
+    GET_MOVE_TIP = GAME_STATE_PREFIX + 'get_move_tip'  # noqa
+    RESIGN = GAME_STATE_PREFIX + 'resign'  # noqa
+    RESIGN_SURE = RESIGN + '_sure'  # noqa

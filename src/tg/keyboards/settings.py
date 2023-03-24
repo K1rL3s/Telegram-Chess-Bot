@@ -1,26 +1,11 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from src.tg.consts import CallbackData
+from src.tg.keyboards.universal import main_menu_button
 
-start_keyboard = InlineKeyboardMarkup().row(
-    InlineKeyboardButton('🏠Главное меню', callback_data=CallbackData.OPEN_MAIN_MENU.value),
-    InlineKeyboardButton('⭐Про бота', callback_data=CallbackData.ABOUT_BOT.value)
-)
-
-
-main_menu_keyboard = InlineKeyboardMarkup().row(
-    InlineKeyboardButton('♟️Играть', callback_data=CallbackData.OPEN_GAME_MENU.value)
-).row(
-    InlineKeyboardButton('⚙️Настройки', callback_data=CallbackData.OPEN_SETTINGS.value),
-    InlineKeyboardButton('📜Правила/Помощь', callback_data=CallbackData.OPEN_RULES_HELP.value),
-)
-
-back_to_main_menu_keyboard = InlineKeyboardMarkup().row(
-    InlineKeyboardButton('🏠Главное меню', callback_data=CallbackData.OPEN_MAIN_MENU.value)
-)
 
 settings_keyboard = InlineKeyboardMarkup().row(
-    InlineKeyboardButton('🏠Главное меню', callback_data=CallbackData.OPEN_MAIN_MENU.value),
+    main_menu_button,
     InlineKeyboardButton('🔁Вернуть по умолчанию', callback_data=CallbackData.RESET_ALL_SETTINGS.value)
 ).row(
     InlineKeyboardButton('⌛Минимальное время', callback_data=CallbackData.EDIT_MIN_TIME.value),
@@ -39,11 +24,6 @@ settings_keyboard = InlineKeyboardMarkup().row(
     InlineKeyboardButton('💥Размеры', callback_data=CallbackData.EDIT_SIZE.value)
 )
 
-after_edit_settings_keyboard = InlineKeyboardMarkup().row(
-    InlineKeyboardButton('🏠Главное меню', callback_data=CallbackData.OPEN_MAIN_MENU.value),
-    InlineKeyboardButton('⚙️Настройки', callback_data=CallbackData.OPEN_SETTINGS.value)
-)
-
 are_you_sure_reset_settings_keyboard = InlineKeyboardMarkup().row(
     InlineKeyboardButton('✅Сбросить', callback_data=CallbackData.RESET_ALL_SETTINGS_SURE.value),
     InlineKeyboardButton('❌Отмена', callback_data=CallbackData.OPEN_SETTINGS.value)
@@ -54,10 +34,11 @@ cancel_edit_setting_keyboard = InlineKeyboardMarkup().row(
 )
 
 
-def edit_setting_keyboard(attr: str):
-    return InlineKeyboardMarkup().row(
+def edit_setting_keyboard(attr: str) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup().row(
         InlineKeyboardButton('✍Изменить', callback_data=CallbackData.START_EDIT_SETTING.value + f'{attr}'),
         InlineKeyboardButton('🔁Сбросить', callback_data=CallbackData.RESET_SETTING.value + f'{attr}'),
     ).row(
         InlineKeyboardButton('⚙️Назад', callback_data=CallbackData.OPEN_SETTINGS.value)
     )
+    return keyboard

@@ -1,9 +1,9 @@
 from aiogram import types, Dispatcher
 
 from src.tg.consts import CallbackData
-from src.tg.keyboards import start_keyboard, main_menu_keyboard, back_to_main_menu_keyboard
-from src.tg.utils.db_funcs import create_new_user
-
+from src.tg.keyboards import start_keyboard, main_menu_keyboard, back_to_main_menu_keyboard, \
+    go_to_main_menu_settings_game_keyboard
+from src.tg.utils.db_funcs import create_new_user, get_user
 
 about_message = """
 Привет! 👋
@@ -64,8 +64,28 @@ async def rules_help(message: types.Message | types.CallbackQuery):
         message = message.message
     await message.reply(
         rules_help_message,
-        reply_markup=back_to_main_menu_keyboard,
+        reply_markup=go_to_main_menu_settings_game_keyboard,
         parse_mode='markdown'
+    )
+
+
+async def statistic(callback: types.CallbackQuery):
+    """
+    Обработчик нажатия кнопки "Статистика".
+    """
+
+    user = get_user(callback.from_user.id)
+    message = '\n'.join((
+        f'*Статистика!*\n',
+        f'Игр - *{user.total_games}*',
+        f'Побед - *{user.total_wins}*',
+        f'Ничьей - *{user.total_draws}*',
+        f'Поражений - *{user.total_defeats}*'
+    ))
+    await callback.message.reply(
+        message,
+        parse_mode='markdown',
+        reply_markup=go_to_main_menu_settings_game_keyboard
     )
 
 
@@ -80,3 +100,5 @@ def register_start(dp: Dispatcher):
 
     dp.register_callback_query_handler(rules_help, text=CallbackData.OPEN_RULES_HELP.value)
     dp.register_message_handler(rules_help, commands=['rules', 'правила'])
+
+    dp.register_callback_query_handler(statistic, text=CallbackData.OPEN_STATISTIC.value)

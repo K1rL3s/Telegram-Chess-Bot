@@ -16,7 +16,7 @@ API_URL = os.getenv('API_URL')
 def get_limits() -> dict[str, dict[str, int]]:
     """
     Возвращает серверные лимиты шахматного движка.
-    Используется при открытии настроек в боте.
+    Используется для ограничения вводимых данных юзером.
     """
 
     response = requests.get(API_URL + 'limits')
