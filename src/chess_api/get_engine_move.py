@@ -4,7 +4,8 @@ import requests
 
 from src.chess_api.dataclasses import EngineMove
 from src.utils.decorators import requests_catch, logger_wraps
-from src.tg.utils.abort import abort
+from src.chess_api.abort import abort
+
 
 API_URL = os.getenv('API_URL')
 
@@ -17,7 +18,7 @@ def get_engine_move(
         prev_moves: str | None,
         orientation: str | None,
         **params
-) -> EngineMove:
+) -> EngineMove | None:
     """
     Получает новый ход от шахматного движка и FEN позицию.
 
@@ -25,7 +26,7 @@ def get_engine_move(
     :param prev_moves: Предыдущие ходы (история ходов).
     :param orientation: За какой цвет играет пользователь.
     :param params: Остальные параметры, такие как "threads", "depth", "ram_hash", "skill_level",
-    :return: Мощный намедтупле с ответом сервера.
+    :return: Мощный намедтупле с ответом сервера. Если None - нелегальный ход.
     """
 
     params = {
@@ -35,7 +36,10 @@ def get_engine_move(
         **params
     }
     response = requests.get(API_URL + 'move', params=params)
+
     if not response:
-        return abort(response.json()["message"])
+        if 'illegal' in (message := response.json()["message"]):
+            return None
+        return abort(message)
 
     return EngineMove(**response.json()["response"])

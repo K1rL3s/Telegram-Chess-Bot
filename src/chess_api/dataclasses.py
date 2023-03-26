@@ -2,6 +2,10 @@ from typing import NamedTuple
 
 
 class EngineMove(NamedTuple):
+    """
+    Ответ api/chess/move в виде именованного кортежа.
+    """
+
     stockfish_move: str
     prev_moves: str
     orientation: str
@@ -14,6 +18,10 @@ class EngineMove(NamedTuple):
 
 
 class EngineEvaluation(NamedTuple):
+    """
+    Ответ api/chess/position в виде именованного кортежа.
+    """
+
     is_end: bool
     who_win: str | None
     end_type: str

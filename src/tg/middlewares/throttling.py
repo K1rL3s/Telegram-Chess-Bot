@@ -8,7 +8,7 @@ from src.tg.middlewares.base import MyBaseMiddleware
 
 class ThrottlingMiddleware(MyBaseMiddleware):
     """
-    Простой мидлвар.
+    Простой мидлвар анти-флуд-спам из документации aiogram'а.
     """
 
     def __init__(self, limit=.75, key_prefix='antiflood'):

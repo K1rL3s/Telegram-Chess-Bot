@@ -5,7 +5,8 @@ import requests
 
 from src.chess_api.get_limits import get_limits
 from src.utils.decorators import requests_catch, logger_wraps
-from src.tg.utils.abort import abort
+from src.chess_api.abort import abort
+
 
 API_URL = os.getenv('API_URL')
 
@@ -30,18 +31,19 @@ def get_board_image(
     :return: BytesIO PNG.
     """
 
-    size = get_limits()["size"]["max"]
-
     params = {
         "fen": fen,
         "last_move": last_move,
         "check": check,
-        "size": size,
         "orientation": orientation,
         **params
     }
 
+    if 'size' not in params.keys():
+        params['size'] = get_limits()["size"]["max"]
+
     response = requests.get(API_URL + 'board', params=params)
+
     if not response:
         return abort(response.json()["message"])
 

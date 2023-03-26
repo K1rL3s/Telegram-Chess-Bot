@@ -5,7 +5,8 @@ import requests
 from cachetools.func import ttl_cache
 
 from src.utils.decorators import requests_catch, logger_wraps
-from src.tg.utils.abort import abort
+from src.chess_api.abort import abort
+
 
 API_URL = os.getenv('API_URL')
 

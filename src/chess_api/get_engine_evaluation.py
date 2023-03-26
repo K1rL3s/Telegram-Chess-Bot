@@ -4,7 +4,8 @@ import requests
 
 from src.chess_api.dataclasses import EngineEvaluation
 from src.utils.decorators import requests_catch, logger_wraps
-from src.tg.utils.abort import abort
+from src.chess_api.abort import abort
+
 
 API_URL = os.getenv('API_URL')
 
@@ -32,6 +33,7 @@ def get_engine_evaluation(
         "prev_moves": prev_moves
     }
     response = requests.get(API_URL + 'position', params=params)
+
     if not response:
         return abort(response.json()["message"])
 

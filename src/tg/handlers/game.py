@@ -152,6 +152,15 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
         orientation=game.orientation,
         **settings.get_params()
     )
+
+    if data is None:
+        await message.reply(
+            'Это *нелегальный* ход',
+            parse_mode='markdown',
+            reply_markup=game_conitnue_keyboard
+        )
+        return
+
     update_current_game(
         message.from_user.id,
         prev_moves=data.prev_moves,
