@@ -8,5 +8,6 @@ from src.tg.keyboards.universal import (
 )
 from src.tg.keyboards.game import (
     pre_game_keyboard, choose_color_keyboard, game_conitnue_keyboard,
-    game_end_keyboard, after_tip_keyboard, are_you_sure_resign_keyboard
+    game_end_keyboard, after_tip_keyboard, are_you_sure_resign_keyboard,
+    illegal_move_keyboard
 )

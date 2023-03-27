@@ -8,6 +8,7 @@ from src.chess_api.abort import abort
 
 
 API_URL = os.getenv('API_URL')
+headers = {"Authorization": os.getenv('API_AUTH_KEY')}
 
 
 @logger_wraps()
@@ -32,7 +33,7 @@ def get_engine_evaluation(
         "fen": fen,
         "prev_moves": prev_moves
     }
-    response = requests.get(API_URL + 'position', params=params)
+    response = requests.get(API_URL + 'position', params=params, headers=headers)
 
     if not response:
         return abort(response.json()["message"])

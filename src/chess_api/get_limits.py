@@ -9,6 +9,7 @@ from src.chess_api.abort import abort
 
 
 API_URL = os.getenv('API_URL')
+headers = {"Authorization": os.getenv('API_AUTH_KEY')}
 
 
 @logger_wraps()
@@ -20,7 +21,7 @@ def get_limits() -> dict[str, dict[str, int]]:
     Используется для ограничения вводимых данных юзером.
     """
 
-    response = requests.get(API_URL + 'limits')
+    response = requests.get(API_URL + 'limits', headers=headers)
     if not response:
         return abort(response.json()["message"])
     return response.json()["response"]

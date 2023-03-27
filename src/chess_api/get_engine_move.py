@@ -8,6 +8,7 @@ from src.chess_api.abort import abort
 
 
 API_URL = os.getenv('API_URL')
+headers = {"Authorization": os.getenv('API_AUTH_KEY')}
 
 
 @logger_wraps()
@@ -35,7 +36,7 @@ def get_engine_move(
         "orientation": orientation,
         **params
     }
-    response = requests.get(API_URL + 'move', params=params)
+    response = requests.get(API_URL + 'move', params=params, headers=headers)
 
     if not response:
         if 'illegal' in (message := response.json()["message"]):

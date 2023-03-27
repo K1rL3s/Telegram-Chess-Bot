@@ -9,6 +9,7 @@ from src.chess_api.abort import abort
 
 
 API_URL = os.getenv('API_URL')
+headers = {"Authorization": os.getenv('API_AUTH_KEY')}
 
 
 @logger_wraps()
@@ -42,7 +43,7 @@ def get_board_image(
     if 'size' not in params.keys():
         params['size'] = get_limits()["size"]["max"]
 
-    response = requests.get(API_URL + 'board', params=params)
+    response = requests.get(API_URL + 'board', params=params, headers=headers)
 
     if not response:
         return abort(response.json()["message"])

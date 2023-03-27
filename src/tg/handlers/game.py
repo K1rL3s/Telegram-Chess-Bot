@@ -9,7 +9,7 @@ from src.tg.keyboards import (
     pre_game_keyboard, choose_color_keyboard, game_conitnue_keyboard,
     game_end_keyboard, after_tip_keyboard
 )
-from src.tg.keyboards.game import are_you_sure_resign_keyboard
+from src.tg.keyboards.game import are_you_sure_resign_keyboard, illegal_move_keyboard
 from src.tg.utils.db_funcs import (
     get_settings, get_current_game, create_new_game,
     update_current_game, stop_current_game
@@ -157,7 +157,7 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
         await message.reply(
             'Это *нелегальный* ход',
             parse_mode='markdown',
-            reply_markup=game_conitnue_keyboard
+            reply_markup=illegal_move_keyboard
         )
         return
 
