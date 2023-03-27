@@ -43,6 +43,9 @@ def get_board_image(
     if 'size' not in params.keys():
         params['size'] = get_limits()["size"]["max"]
 
+    if 'with_coords' in params.keys():
+        params['coords'] = 't' if params['with_coords'] else 'f'
+
     response = requests.get(API_URL + 'board', params=params, headers=headers)
 
     if not response:
