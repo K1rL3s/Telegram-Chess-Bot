@@ -5,9 +5,10 @@ from src.tg.keyboards import start_keyboard, main_menu_keyboard, back_to_main_me
     go_to_main_menu_settings_game_keyboard
 from src.tg.utils.db_funcs import create_new_user, get_user
 
+
 about_message = """
 Привет! 👋
-Я шахматный чат-бот проект Лесового Кирилла для Яндекс Лицея 2022/2023.
+Я шахматный чат-бот проект для Яндекс Лицея 2022/2023.
 """
 
 rules_help_message = """
@@ -90,10 +91,10 @@ async def statistic(callback: types.CallbackQuery):
 
 
 def register_start(dp: Dispatcher):
-    dp.register_message_handler(start, commands=['start', 'старт', 's', 'h'])
+    dp.register_message_handler(start, commands=['start'])
 
     dp.register_callback_query_handler(main_menu, text=CallbackData.OPEN_MAIN_MENU.value)
-    dp.register_message_handler(main_menu, commands=['menu', 'меню'])
+    dp.register_message_handler(main_menu, commands=['menu'])
 
     dp.register_callback_query_handler(about, text=CallbackData.ABOUT_BOT.value)
     dp.register_message_handler(about, commands=['about'])

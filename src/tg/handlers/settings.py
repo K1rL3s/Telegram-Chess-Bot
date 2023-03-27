@@ -85,7 +85,7 @@ edit_color_message = f"""
 `square light` (белые клетки),
 `square dark` (черные клетка),
 `square light lastmove` (белая клетка последний ход),
-`square dark lastmove` (черная клетка последний ход),
+`square dark lastmove` (чёрная клетка последний ход),
 `margin` (фон координат),
 `coord` (числа и буквы).
 

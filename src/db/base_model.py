@@ -10,6 +10,10 @@ class BaseModel(SqlAlchemyBase):
         return self._repr()
 
     def _repr(self, **fields) -> str:
+        """
+        Помощник __repr__, взят с stackoverflow
+        """
+
         field_strings = []
         at_least_one_attached_attribute = False
         for key, field in fields.items():

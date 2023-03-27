@@ -13,7 +13,7 @@ class Game(BaseModel):
     __tablename__ = 'games'
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
     orientation = Column(String, nullable=False)
     prev_moves = Column(String)
     last_move = Column(String)
@@ -23,7 +23,7 @@ class Game(BaseModel):
     created_time = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     modified_time = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow,
                            nullable=False)
-    is_active = Column(Boolean,  default=True, nullable=False)
+    is_active = Column(Boolean,  default=True, nullable=False, index=True)  # index?
 
     user = relationship("User", back_populates="games")
 

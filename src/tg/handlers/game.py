@@ -20,8 +20,8 @@ i_move_your_turn = 'Я сделал ход "*{}*".'.format
 
 class ChessGame(StatesGroup):
     """
-    Пока пользователь в состоянии этой группы, все его текстовые сообщения будут отлавливаться
-    обработчиком ходов. При нажатии на любую кнопку состояния прекращается.
+    Пока пользователь в состоянии этой группы, все его текстовые сообщения будут отлавливаться обработчиком ходов.
+    При нажатии на кнопку, не относящуюся к игре, или использовании команды, состояние прерывается.
     """
     playing = State()
 
@@ -37,7 +37,7 @@ def stop_game(user_id: int) -> str:
     message = 'Игра закончилась *{}!*'.format
     if evaluation.end_type != 'checkmate':
         return message('ничьёй')
-    return message(f"победой {'белых' if evaluation.value > 0 else 'черных'} (mate in {abs(evaluation.value)})")
+    return message(f"победой {'белых' if evaluation.value > 0 else 'чёрных'} (mate in {abs(evaluation.value)})")
 
 
 def get_evaluation_comment(game: Game) -> str:
@@ -134,9 +134,9 @@ async def continue_old_game(callback: types.CallbackQuery):
 async def user_move(message: types.Message | types.CallbackQuery, state: FSMContext, is_user_black: bool = False):
     """
     Обработчик сообщения с ходом.
-    Используется функцией color_chosen для генерации первого сообщения при игре за черных.
+    Используется функцией color_chosen для генерации первого сообщения при игре за чёрных.
 
-    is_user_black: Юзер играет за черных и это первый ход.
+    is_user_black: Юзер играет за чёрных и это первый ход.
     """
 
     if is_user_black:
@@ -248,7 +248,7 @@ def register_game(dp: Dispatcher):
         color_chosen,
         lambda callback: callback.data.startswith(CallbackData.CHOOSE_COLOR_PREFIX.value)
     )
-    dp.register_message_handler(user_move, state=ChessGame.playing)
+
     dp.register_callback_query_handler(
         continue_old_game,
         text=CallbackData.PLAY_OLD_GAME.value,
@@ -263,3 +263,5 @@ def register_game(dp: Dispatcher):
         lambda callback: callback.data.startswith(CallbackData.RESIGN.value),
         state=ChessGame.playing
     )
+
+    dp.register_message_handler(user_move, state=ChessGame.playing)

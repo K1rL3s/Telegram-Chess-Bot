@@ -6,7 +6,7 @@ from loguru import logger
 
 def abort(message: str | None = None, error: Type[Exception] = CancelHandler):
     """
-    Прерывает ответ на сообщение и пишет лог (ответ пользователю?)
+    Прерывает ответ на сообщение и пишет лог.
 
     :param message: Сообщение от апишки.
     :param error: Ошибка, которая появится.

@@ -11,7 +11,7 @@ class Settings(BaseModel):
     __tablename__ = 'settings'
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, unique=True, index=True)
     min_time = Column(Integer, nullable=False)
     max_time = Column(Integer, nullable=False)
     threads = Column(Integer, nullable=False)

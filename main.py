@@ -7,6 +7,10 @@ from src.tg.middlewares import setup_middlewares
 
 
 async def all_errors(update, error):
+    """
+    Не уверен, что оно поможет хоть с чем-то.
+    """
+
     logger.error(f'Exception Error: {update=}, {error}')
 
 

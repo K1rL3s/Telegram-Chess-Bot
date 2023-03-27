@@ -8,7 +8,7 @@ from src.tg.middlewares.base import MyBaseMiddleware
 
 class ThrottlingMiddleware(MyBaseMiddleware):
     """
-    Простой мидлвар анти-флуд-спам из документации aiogram'а.
+    Простой мидлварь анти-флуд-спам из документации aiogram'а.
     """
 
     def __init__(self, limit=.75, key_prefix='antiflood'):
@@ -49,5 +49,5 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         :param message: Сообщение.
         :param throttled: ?
         """
-        if throttled.exceeded_count == 3:
+        if throttled.exceeded_count == 3:  # Число взял из головы
             logger.info(f'Наведение суеты: {self.get_short_info(message)}')
