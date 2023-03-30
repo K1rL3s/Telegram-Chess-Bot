@@ -253,8 +253,10 @@ async def resign(callback: types.CallbackQuery, state: FSMContext):
         return
 
     await state.finish()
+
+    loading_message = await create_loading_message(callback.message, '*Завершение игры...*')
     message = stop_game(callback.from_user.id)
-    await callback.message.reply(
+    await loading_message.edit_message(
         message,
         parse_mode='markdown',
         reply_markup=game_end_keyboard
