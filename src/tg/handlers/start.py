@@ -8,7 +8,7 @@ from src.tg.utils.db_funcs import create_new_user, get_user
 
 about_message = """
 Привет! 👋
-Я шахматный чат-бот проект для Яндекс Лицея 2022/2023.
+Я [шахматный чат-бот проект](https://github.com/K1rL3s/Telegram-Chess-Bot) для Яндекс Лицея 2022/2023.
 """
 
 rules_help_message = """
@@ -25,7 +25,7 @@ async def start(message: types.Message):
     """
 
     create_new_user(message.from_user.id)
-    await message.reply(about_message, reply_markup=start_keyboard)
+    await message.reply(about_message, reply_markup=start_keyboard, parse_mode='markdown')
 
 
 async def main_menu(message: types.Message | types.CallbackQuery):

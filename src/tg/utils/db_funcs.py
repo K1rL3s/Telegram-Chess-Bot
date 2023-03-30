@@ -23,15 +23,16 @@ def create_new_user(user_id: int) -> None:
     db_sess.commit()
 
 
-def create_new_game(user_id: int, orientation: str) -> None:
+def create_new_game(user_id: int, orientation: str) -> bool:
     """
     Создаёт новую игру, останавливая, если есть, старую.
 
     :param user_id: Юзер айди.
     :param orientation: Цвет игрока.
+    :return: True, если была прекращена старая игра.
     """
 
-    stop_current_game(user_id)
+    is_old_game = isinstance(stop_current_game(user_id), EngineEvaluation)
 
     if orientation not in ('w', 'b'):
         raise ValueError('Цвет игрока должен быть "w" или "b"')
@@ -44,6 +45,8 @@ def create_new_game(user_id: int, orientation: str) -> None:
     )
     db_sess.add(game)
     db_sess.commit()
+
+    return is_old_game
 
 
 def get_user(user_id: int) -> User | None:

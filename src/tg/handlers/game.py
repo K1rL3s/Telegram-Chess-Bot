@@ -14,6 +14,8 @@ from src.tg.utils.db_funcs import (
     get_settings, get_current_game, create_new_game,
     update_current_game, stop_current_game
 )
+from src.tg.utils.loading_message import create_loading_message
+
 
 i_move_your_turn = 'Я сделал ход "*{}*".'.format
 
@@ -87,14 +89,23 @@ async def color_chosen(callback: types.CallbackQuery):
     Обработчик нажатия кнопок с выбором цвета.
     """
 
+    loading_message = await create_loading_message(callback.message, '*Создание новой игры...*')
+
     color = callback.data.replace(CallbackData.CHOOSE_COLOR_PREFIX.value, '')
-    create_new_game(callback.from_user.id, color)
+    is_old_game = create_new_game(callback.from_user.id, color)
+
+    if is_old_game:
+        text = 'Прошлая игра завершена, *новая создана..*.'
+    else:
+        text = '*Новая игра создана...*'
+    await loading_message.edit_message(text, parse_mode='markdown')
 
     if color == 'b':
         state = await ChessGame.playing.set()  # state = None
         await user_move(callback, state, is_user_black=True)
     else:
         await continue_old_game(callback)
+    await loading_message.delete()
 
 
 async def continue_old_game(callback: types.CallbackQuery):
@@ -105,6 +116,9 @@ async def continue_old_game(callback: types.CallbackQuery):
 
     if not (game := get_current_game(callback.from_user.id)):
         return
+
+    loading_message = await create_loading_message(callback.message, '*Загрузка доски...*')
+
     await ChessGame.playing.set()
     settings = get_settings(callback.from_user.id)
     image = get_board_image(
@@ -129,6 +143,7 @@ async def continue_old_game(callback: types.CallbackQuery):
         parse_mode='markdown',
         reply_markup=game_conitnue_keyboard
     )
+    await loading_message.delete()
 
 
 async def user_move(message: types.Message | types.CallbackQuery, state: FSMContext, is_user_black: bool = False):
@@ -144,6 +159,8 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     else:
         move = ''.join(message.text.strip().lower().replace('-', '').split())
 
+    loading_message = await create_loading_message(message, '*Получение хода движка...*')
+
     game = get_current_game(message.from_user.id)
     settings = get_settings(message.from_user.id)
     data = get_engine_move(
@@ -154,7 +171,7 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     )
 
     if data is None:
-        await message.reply(
+        await loading_message.edit_message(
             'Это *нелегальный* ход',
             parse_mode='markdown',
             reply_markup=illegal_move_keyboard
@@ -196,12 +213,15 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
         parse_mode='markdown',
         reply_markup=keyboard
     )
+    await loading_message.delete()
 
 
 async def move_tip(callback: types.CallbackQuery, state: FSMContext):
     """
     Обработчик нажатия кнопки "Подсказка".
     """
+
+    loading_message = await create_loading_message(callback.message, '*Получение хода движка...*')
 
     game = get_current_game(callback.from_user.id)
     settings = get_settings(callback.from_user.id)
@@ -212,7 +232,7 @@ async def move_tip(callback: types.CallbackQuery, state: FSMContext):
         orientation='b',
         **settings.get_params()
     )
-    await callback.message.reply(
+    await loading_message.edit_message(
         f'Я бы сделал ход "*{data.stockfish_move}*"',
         parse_mode='markdown',
         reply_markup=after_tip_keyboard
