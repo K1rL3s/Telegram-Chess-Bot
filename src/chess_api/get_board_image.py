@@ -1,20 +1,13 @@
-import os
 from io import BytesIO
 
-import requests
-
 from src.chess_api.get_limits import get_limits
-from src.utils.decorators import requests_catch, logger_wraps
-from src.chess_api.abort import abort
+from src.chess_api.utils import async_requests_catch, async_logger_wraps, abort
+from src.consts import API_URL, api_headers, api_session
 
 
-API_URL = os.getenv('API_URL')
-headers = {"Authorization": os.getenv('API_AUTH_KEY')}
-
-
-@logger_wraps()
-@requests_catch
-def get_board_image(
+@async_logger_wraps()
+@async_requests_catch
+async def get_board_image(
         *,
         fen: str,
         last_move: str | None = None,
@@ -40,15 +33,16 @@ def get_board_image(
         **params
     }
 
+    # По сути, никогда не случается, потому что вызов всегда с **Setings.get_params(), а там size всегда есть.
     if 'size' not in params.keys():
-        params['size'] = get_limits()["size"]["max"]
+        params['size'] = (await get_limits())["size"]["max"]
 
     if 'with_coords' in params.keys():
         params['coords'] = 't' if params['with_coords'] else 'f'
 
-    response = requests.get(API_URL + 'board', params=params, headers=headers)
+    response = await api_session.get(API_URL + 'board', params=params, headers=api_headers)
 
-    if not response:
+    if response.status_code != 200:
         return abort(response.json()["message"])
 
     return BytesIO(response.content)

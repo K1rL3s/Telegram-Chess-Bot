@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 from src.tg.keyboards.universal import main_menu_button
 
 

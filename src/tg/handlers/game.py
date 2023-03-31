@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from src.chess_api import get_board_image, get_engine_move, get_engine_evaluation
 from src.db.games import Game
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 from src.tg.keyboards import (
     pre_game_keyboard, choose_color_keyboard, game_conitnue_keyboard,
     game_end_keyboard, after_tip_keyboard
@@ -28,21 +28,27 @@ class ChessGame(StatesGroup):
     playing = State()
 
 
-def stop_game(user_id: int) -> str:
+async def stop_game(user_id: int) -> str:
     """
     Останавливает игру и возвращает сообщение с итогом.
     :param user_id: Юзер айди.
     :return: Сообщение с итогом.
     """
 
-    evaluation = stop_current_game(user_id)
+    evaluation = await stop_current_game(user_id)
     message = 'Игра закончилась *{}!*'.format
-    if evaluation.end_type != 'checkmate':
-        return message('ничьёй')
-    return message(f"победой {'белых' if evaluation.value > 0 else 'чёрных'} (mate in {abs(evaluation.value)})")
+
+    if evaluation.end_type == 'checkmate':
+        if evaluation.is_end:  # Поставлен мат
+            return message(f"победой {'белых' if evaluation.who_win == 'w' else 'чёрных'}")
+
+        # Мат будет через несколько ходов, для досрочного завершения игры
+        return message(f"победой {'белых' if evaluation.value > 0 else 'чёрных'} (mate in {abs(evaluation.value)})")
+
+    return message('ничьёй')
 
 
-def get_evaluation_comment(game: Game) -> str:
+async def get_evaluation_comment(game: Game) -> str:
     """
     Даёт сообщение с оценкой позиции, нужно при Settings.with_position_evaluation == True
 
@@ -50,7 +56,7 @@ def get_evaluation_comment(game: Game) -> str:
     :return: Сообщение с оценкой позиции.
     """
 
-    evaluation = get_engine_evaluation(fen=game.fen)
+    evaluation = await get_engine_evaluation(fen=game.fen)
     return '\n' + '\n'.join((
         f'*Оценка позиции*',
         f'Тип оценки: *{evaluation.end_type}*',
@@ -92,7 +98,7 @@ async def color_chosen(callback: types.CallbackQuery):
     loading_message = await create_loading_message(callback.message, '*Создание новой игры...*')
 
     color = callback.data.replace(CallbackData.CHOOSE_COLOR_PREFIX.value, '')
-    is_old_game = create_new_game(callback.from_user.id, color)
+    is_old_game = await create_new_game(callback.from_user.id, color)
 
     if is_old_game:
         text = 'Прошлая игра завершена, *новая создана..*.'
@@ -121,7 +127,7 @@ async def continue_old_game(callback: types.CallbackQuery):
 
     await ChessGame.playing.set()
     settings = get_settings(callback.from_user.id)
-    image = get_board_image(
+    image = await get_board_image(
         fen=game.fen,
         last_move=game.last_move,
         check=game.check,
@@ -135,7 +141,7 @@ async def continue_old_game(callback: types.CallbackQuery):
         caption = i_move_your_turn(game.last_move)
 
     if settings.with_position_evaluation:
-        caption += get_evaluation_comment(game)
+        caption += await get_evaluation_comment(game)
 
     await callback.message.reply_photo(
         image,
@@ -159,11 +165,14 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     else:
         move = ''.join(message.text.strip().lower().replace('-', '').split())
 
-    loading_message = await create_loading_message(message, '*Получение хода движка...*')
+    if isinstance(message, types.CallbackQuery):  # kostil
+        loading_message = await create_loading_message(message.message, '*Получение хода движка...*')
+    else:
+        loading_message = await create_loading_message(message, '*Получение хода движка...*')
 
     game = get_current_game(message.from_user.id)
     settings = get_settings(message.from_user.id)
-    data = get_engine_move(
+    data = await get_engine_move(
         user_move=move,
         prev_moves=game.prev_moves,
         orientation=game.orientation,
@@ -185,7 +194,7 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
         check=data.check,
         fen=data.fen,
     )
-    image = get_board_image(
+    image = await get_board_image(
         fen=data.fen,
         last_move=data.stockfish_move,
         check=data.check,
@@ -196,15 +205,15 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     if data.end_type:
         await state.finish()
         keyboard = game_end_keyboard
-        caption = stop_game(message.from_user.id)
+        caption = await stop_game(message.from_user.id)
     else:
         keyboard = game_conitnue_keyboard
         caption = i_move_your_turn(data.stockfish_move)
 
         if settings.with_position_evaluation:
-            caption += get_evaluation_comment(game)
+            caption += await get_evaluation_comment(game)
 
-    if isinstance(message, types.CallbackQuery):
+    if isinstance(message, types.CallbackQuery):  # kostil
         message = message.message
 
     await message.reply_photo(
@@ -226,7 +235,7 @@ async def move_tip(callback: types.CallbackQuery, state: FSMContext):
     game = get_current_game(callback.from_user.id)
     settings = get_settings(callback.from_user.id)
 
-    data = get_engine_move(
+    data = await get_engine_move(
         user_move=None,
         prev_moves=game.prev_moves,
         orientation='b',
@@ -255,7 +264,7 @@ async def resign(callback: types.CallbackQuery, state: FSMContext):
     await state.finish()
 
     loading_message = await create_loading_message(callback.message, '*Завершение игры...*')
-    message = stop_game(callback.from_user.id)
+    message = await stop_game(callback.from_user.id)
     await loading_message.edit_message(
         message,
         parse_mode='markdown',

@@ -2,7 +2,7 @@ from aiogram import types, Dispatcher
 from loguru import logger
 
 from src.tg.middlewares.base import MyBaseMiddleware
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 
 
 class ChessGameStateMiddleware(MyBaseMiddleware):

@@ -2,9 +2,9 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from src.chess_api.get_limits import get_limits, get_defaults
+from src.chess_api import get_limits, get_defaults
 from src.db.settings import Settings
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 from src.tg.keyboards import (
     settings_keyboard, edit_setting_keyboard, cancel_edit_setting_keyboard,
     are_you_sure_reset_settings_keyboard, go_to_main_menu_settings_game_keyboard
@@ -160,7 +160,7 @@ def generate_settings_message(user_id: int) -> str:
     return '\n'.join(message)
 
 
-def generate_setting_preview_message(user_id: int, attr: str) -> str:
+async def generate_setting_preview_message(user_id: int, attr: str) -> str:
     """
     Делает развернутое сообщение про выбранные параметр настроек.
 
@@ -177,13 +177,13 @@ def generate_setting_preview_message(user_id: int, attr: str) -> str:
             f'\n{desc}'
         )
     else:
-        limits = get_limits()[attr]
+        attr = (await get_limits())[attr]
         message = (
             f'*{name}*',
             f'Текущее значение - *{value}*',
-            f'Минимум - *{limits["min"]}*',
-            f'Дефолт - *{limits["default"]}*',
-            f'Максимум - *{limits["max"]}*',
+            f'Минимум - *{attr["min"]}*',
+            f'Дефолт - *{attr["default"]}*',
+            f'Максимум - *{attr["max"]}*',
             f'\n{desc}'
         )
     return '\n'.join(message)
@@ -225,7 +225,7 @@ async def preview_setting(callback: types.CallbackQuery):
     Обработчик нажатия кнопки любого параметра настроек.
     """
 
-    message = generate_setting_preview_message(
+    message = await generate_setting_preview_message(
         callback.from_user.id, attr := callback.data.lower().replace('edit_', '')
     )
     await callback.message.reply(
@@ -241,8 +241,8 @@ async def reset_current_setting(callback: types.CallbackQuery):
     """
 
     attr = callback.data.replace(CallbackData.RESET_SETTING.value, '').lower()
-    default = get_defaults()[attr]
-    new_value = update_settings(callback.from_user.id, **{attr: default})[attr]
+    default = (await get_defaults())[attr]
+    new_value = (await update_settings(callback.from_user.id, **{attr: default}))[attr]
     name = attr_to_ru_with_description[attr][0]
     await callback.message.reply(
             succes_edit_message(name, format_settings_value(new_value, limit=0)),
@@ -283,9 +283,9 @@ async def edit_bool_setting(message: types.Message, user_id: int, attr: str):
     """
 
     settings = get_settings(user_id)
-    update_settings(user_id, **{attr: not getattr(settings, attr)})
+    await update_settings(user_id, **{attr: not getattr(settings, attr)})
     await message.edit_text(
-        generate_setting_preview_message(user_id, attr),
+        await generate_setting_preview_message(user_id, attr),
         parse_mode="markdown",
         reply_markup=edit_setting_keyboard(attr)
     )
@@ -318,7 +318,7 @@ async def edit_setting(message: types.Message, state: FSMContext, text: str = No
             parse_mode='markdown'
         )
     else:
-        new_value = update_settings(message.from_user.id, **{attr: value})[attr]
+        new_value = (await update_settings(message.from_user.id, **{attr: value}))[attr]
         await message.reply(
             succes_edit_message(name, format_settings_value(new_value, limit=0)),
             reply_markup=go_to_main_menu_settings_game_keyboard,
@@ -356,7 +356,7 @@ async def reset_all_settings(callback: types.CallbackQuery):
         )
         return
 
-    update_settings(callback.from_user.id, **get_defaults())
+    await update_settings(callback.from_user.id, **(await get_defaults()))
     await callback.message.reply(
         "Настройки сброшены на значения по умолчанию",
         reply_markup=go_to_main_menu_settings_game_keyboard

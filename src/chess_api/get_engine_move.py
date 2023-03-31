@@ -1,19 +1,10 @@
-import os
-
-import requests
-
-from src.chess_api.dataclasses import EngineMove
-from src.utils.decorators import requests_catch, logger_wraps
-from src.chess_api.abort import abort
+from src.chess_api.utils import EngineMove, async_requests_catch, async_logger_wraps, abort
+from src.consts import API_URL, api_headers, api_session
 
 
-API_URL = os.getenv('API_URL')
-headers = {"Authorization": os.getenv('API_AUTH_KEY')}
-
-
-@logger_wraps()
-@requests_catch
-def get_engine_move(
+@async_logger_wraps()
+@async_requests_catch
+async def get_engine_move(
         *,
         user_move: str | None,
         prev_moves: str | None,
@@ -36,9 +27,9 @@ def get_engine_move(
         "orientation": orientation,
         **params
     }
-    response = requests.get(API_URL + 'move', params=params, headers=headers)
+    response = await api_session.get(API_URL + 'move', params=params, headers=api_headers)
 
-    if not response:
+    if response.status_code != 200:
         if 'illegal' in (message := response.json()["message"]):
             return None
         return abort(message)

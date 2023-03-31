@@ -4,10 +4,23 @@ from sqlalchemy import Integer, DateTime, Column, Boolean, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from src.db.base_model import BaseModel
-from src.chess_api.get_limits import get_defaults
+from src.chess_api import get_defaults
 
 
 class Settings(BaseModel):
+    """
+
+    Example of usage:
+    (`def create_new_user` from `src.tg.utils.db_funcs`)
+
+    db_sess = create_session()
+    settings = Settings(user_id=<int>)
+    await settings.async_init()
+    db_sess.add(settings)
+    db_sess.commit()
+
+    """
+
     __tablename__ = 'settings'
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
@@ -29,9 +42,13 @@ class Settings(BaseModel):
     user = relationship('User', back_populates='settings')
 
     def __init__(self, **kwargs):
-        defaults = get_defaults()
-        defaults.update(kwargs)
+        self.kwargs = kwargs
+
+    async def async_init(self):
+        defaults = await get_defaults()
+        defaults.update(self.kwargs)
         super(Settings, self).__init__(**defaults)
+        # del self.kwargs  # ?
 
     def get_params(self) -> dict:
         return {

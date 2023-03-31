@@ -1,6 +1,6 @@
 from aiogram import types, Dispatcher
 
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 from src.tg.keyboards import start_keyboard, main_menu_keyboard, back_to_main_menu_keyboard, \
     go_to_main_menu_settings_game_keyboard
 from src.tg.utils.db_funcs import create_new_user, get_user
@@ -14,7 +14,9 @@ about_message = """
 rules_help_message = """
 Правила шахмат:
 ...
-Пишите ходы в формате *"КлеткаКлетка"* на английском, например: "e2e4", "a8b8".
+Пишите ходы в формате "*КлеткаКлетка*" на английском, например: "*e2e4*", "*a8b8*".
+Для превращения пешки надо добавить букву фигуры в ход, например: "*c7c8q*" - превращение в королеву.
+*q* - королева, *r* - ладья, *b* - слон, *n* - конь. 
 ...
 """
 
@@ -24,7 +26,7 @@ async def start(message: types.Message):
     Обработчик /start.
     """
 
-    create_new_user(message.from_user.id)
+    await create_new_user(message.from_user.id)
     await message.reply(about_message, reply_markup=start_keyboard, parse_mode='markdown')
 
 

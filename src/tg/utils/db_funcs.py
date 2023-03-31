@@ -1,12 +1,12 @@
 import sqlalchemy as sa
 
 from src.chess_api import get_engine_evaluation, get_limits
-from src.chess_api.dataclasses import EngineEvaluation
+from src.chess_api.utils import EngineEvaluation
 from src.db.db_session import create_session
 from src.db.__all_models import User, Settings, Game
 
 
-def create_new_user(user_id: int) -> None:
+async def create_new_user(user_id: int) -> None:
     """
     Создаёт нового юзера.
 
@@ -16,14 +16,18 @@ def create_new_user(user_id: int) -> None:
     db_sess = create_session()
     if get_user(user_id):
         return
+
     user = User(user_id=user_id)
     db_sess.add(user)
+
     settings = Settings(user_id=user_id)
+    await settings.async_init()
     db_sess.add(settings)
+
     db_sess.commit()
 
 
-def create_new_game(user_id: int, orientation: str) -> bool:
+async def create_new_game(user_id: int, orientation: str) -> bool:
     """
     Создаёт новую игру, останавливая, если есть, старую.
 
@@ -32,7 +36,7 @@ def create_new_game(user_id: int, orientation: str) -> bool:
     :return: True, если была прекращена старая игра.
     """
 
-    is_old_game = isinstance(stop_current_game(user_id), EngineEvaluation)
+    is_old_game = isinstance(await stop_current_game(user_id), EngineEvaluation)
 
     if orientation not in ('w', 'b'):
         raise ValueError('Цвет игрока должен быть "w" или "b"')
@@ -91,7 +95,7 @@ def get_current_game(user_id: int) -> Game:
     return db_sess.scalar(query)
 
 
-def stop_current_game(user_id: int) -> EngineEvaluation | None:
+async def stop_current_game(user_id: int) -> EngineEvaluation | None:
     """
     Останавливает текущую игру и возвращает оценку позиции от движка.
 
@@ -104,7 +108,7 @@ def stop_current_game(user_id: int) -> EngineEvaluation | None:
     if not current_game:
         return None
 
-    evaluation = get_engine_evaluation(fen=current_game.fen)
+    evaluation = await get_engine_evaluation(fen=current_game.fen)
     if evaluation.is_end:
         who_win = evaluation.who_win
     elif evaluation.end_type == "checkmate":
@@ -178,7 +182,7 @@ def update_current_game(
     return True
 
 
-def update_settings(user_id: int, **params) -> dict:
+async def update_settings(user_id: int, **params) -> dict:
     """
     Обновляет настройки движка по юзер айди.
 
@@ -189,7 +193,7 @@ def update_settings(user_id: int, **params) -> dict:
 
     db_sess = create_session()
 
-    limits = get_limits()
+    limits = await get_limits()
     for param in params.keys():
         try:
             params[param] = max(min(params[param], limits[param]["max"]), limits[param]["min"])

@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 
 
 main_menu_button = InlineKeyboardButton('🏠Главное меню', callback_data=CallbackData.OPEN_MAIN_MENU.value)

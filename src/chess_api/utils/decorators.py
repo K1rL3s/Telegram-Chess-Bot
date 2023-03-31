@@ -2,36 +2,36 @@ import functools
 
 from aiogram.dispatcher.handler import CancelHandler
 from loguru import logger
-from requests import RequestException
+from httpx import RequestError
 
 
 def get_func_name(func):
     return getattr(func, 'func_name', None) or getattr(func, '__name__', None) or '<undefined>'
 
 
-def requests_catch(func):
+def async_requests_catch(func):
     """
-    Декоратор для логирования и отлавливания ошибок при запросах к шахматной апишке.
-    (Потому что там ошибки километровые)
+    Декоратор для логирования и отлавливания ошибок при async запросах к шахматной апишке.
+    (Потому что ошибки километровые при запросах)
     """
 
     function_name = get_func_name(func)
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         try:
-            return func(*args, **kwargs)
-        except RequestException as e:
+            return await func(*args, **kwargs)
+        except RequestError as e:
             logger.error(
-                f'Ошибка API "{function_name}": {e.__class__.__module__}.{e.__class__.__qualname__}: {e}'
+                f'Ошибка API "{function_name}": {repr(e)}'
             )
             raise CancelHandler()
     return wrapper
 
 
-def logger_wraps(entry: bool = True, output: bool = True, level: str = "DEBUG"):
+def async_logger_wraps(entry: bool = True, output: bool = True, level: str = "DEBUG"):
     """
-    Логгер выполнения функции.
+    Логгер выполнения async функций.
 
     :param entry: Выводить ли входные данные.
     :param output: Выводить ли выходные данные.
@@ -42,11 +42,11 @@ def logger_wraps(entry: bool = True, output: bool = True, level: str = "DEBUG"):
         function_name = get_func_name(func)
 
         @functools.wraps(func)
-        def wrapped(*args, **kwargs):
+        async def wrapped(*args, **kwargs):
             logger_ = logger.opt(depth=1)
             if entry:
                 logger_.log(level, f'Вызов "{function_name}" (args={args}, kwargs={kwargs})')
-            result = func(*args, **kwargs)
+            result = await func(*args, **kwargs)
             if output:
                 logger_.log(level, f'Результат "{function_name}" (result={result})')
             return result

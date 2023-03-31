@@ -1,4 +1,12 @@
+import os
 from enum import Enum
+
+import httpx
+
+
+API_URL = os.getenv('API_URL')
+api_headers = {"Authorization": os.getenv('API_AUTH_KEY')}
+api_session = httpx.AsyncClient(follow_redirects=True, timeout=15)
 
 
 class CallbackData(Enum):

@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from src.db.games import Game
-from src.tg.consts import CallbackData
+from src.consts import CallbackData
 from src.tg.keyboards.universal import rules_help_button, main_menu_button, statistics_button
 
 
