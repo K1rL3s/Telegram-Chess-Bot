@@ -40,7 +40,9 @@ class LoadingMessage:
         """
         if self.text[-3:].count('.') == 3:
             self.text = self.text[:-3]
-        self.text += '.'
+        else:
+            self.text += '.'
+
         await self.message.edit_text(f'*{self.text}*', parse_mode='markdown')
 
     async def edit_message(self, *args, **kwargs):
