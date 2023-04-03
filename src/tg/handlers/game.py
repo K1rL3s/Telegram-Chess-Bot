@@ -95,13 +95,13 @@ async def color_chosen(callback: types.CallbackQuery):
     Обработчик нажатия кнопок с выбором цвета.
     """
 
-    loading_message = await create_loading_message(callback.message, '*Создание новой игры...*')
+    loading_message = await create_loading_message(callback.message, 'Создание новой игры...')
 
     color = callback.data.replace(CallbackData.CHOOSE_COLOR_PREFIX.value, '')
     is_old_game = await create_new_game(callback.from_user.id, color)
 
     if is_old_game:
-        text = 'Прошлая игра завершена, *новая создана..*.'
+        text = 'Прошлая игра завершена, *новая создана...*'
     else:
         text = '*Новая игра создана...*'
     await loading_message.edit_message(text, parse_mode='markdown')
@@ -123,7 +123,7 @@ async def continue_old_game(callback: types.CallbackQuery):
     if not (game := get_current_game(callback.from_user.id)):
         return
 
-    loading_message = await create_loading_message(callback.message, '*Загрузка доски...*')
+    loading_message = await create_loading_message(callback.message, 'Загрузка доски...')
 
     await ChessGame.playing.set()
     settings = get_settings(callback.from_user.id)
@@ -166,9 +166,9 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
         move = ''.join(message.text.strip().lower().replace('-', '').split())
 
     if isinstance(message, types.CallbackQuery):  # kostil
-        loading_message = await create_loading_message(message.message, '*Получение хода движка...*')
+        loading_message = await create_loading_message(message.message, 'Получение хода движка...')
     else:
-        loading_message = await create_loading_message(message, '*Получение хода движка...*')
+        loading_message = await create_loading_message(message, 'Получение хода движка...')
 
     game = get_current_game(message.from_user.id)
     settings = get_settings(message.from_user.id)
@@ -230,7 +230,7 @@ async def move_tip(callback: types.CallbackQuery, state: FSMContext):
     Обработчик нажатия кнопки "Подсказка".
     """
 
-    loading_message = await create_loading_message(callback.message, '*Получение хода движка...*')
+    loading_message = await create_loading_message(callback.message, 'Получение хода движка...')
 
     game = get_current_game(callback.from_user.id)
     settings = get_settings(callback.from_user.id)
@@ -263,7 +263,7 @@ async def resign(callback: types.CallbackQuery, state: FSMContext):
 
     await state.finish()
 
-    loading_message = await create_loading_message(callback.message, '*Завершение игры...*')
+    loading_message = await create_loading_message(callback.message, 'Завершение игры...')
     message = await stop_game(callback.from_user.id)
     await loading_message.edit_message(
         message,
