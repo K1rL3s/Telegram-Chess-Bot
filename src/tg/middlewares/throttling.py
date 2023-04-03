@@ -4,6 +4,7 @@ from aiogram.utils.exceptions import Throttled
 from loguru import logger
 
 from src.tg.middlewares.base import MyBaseMiddleware
+from src.tg.utils.log_in_chat import log_in_chat
 
 
 class ThrottlingMiddleware(MyBaseMiddleware):
@@ -50,4 +51,6 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         :param throttled: ?
         """
         if throttled.exceeded_count == 3:  # Число взял из головы
-            logger.info(f'Наведение суеты: {self.get_short_info(message)}')
+            message = f'Наведение суеты: {self.get_short_info(message)}'
+            logger.info(message)
+            await log_in_chat(message)

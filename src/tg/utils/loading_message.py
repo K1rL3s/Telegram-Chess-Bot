@@ -2,6 +2,9 @@ import asyncio
 
 from aiogram import types
 
+from src.consts import TIMEOUT
+from src.tg.keyboards import go_to_main_menu_settings_game_keyboard
+
 
 class LoadingMessage:
     message: types.Message
@@ -18,7 +21,7 @@ class LoadingMessage:
     def __init__(self, reply_to: types.Message, wait_message: str, ups: int):
         self.text = wait_message
         self.reply_to = reply_to
-        self.delay = 1 / ups if ups else None
+        self.ups = ups
 
     async def async_init(self):
         self.message = await self.reply_to.reply(f'*{self.text}*', parse_mode='markdown')
@@ -28,11 +31,20 @@ class LoadingMessage:
         """
         Цикл с обновлением точек в конце сообщения.
         """
-        if not self.delay:
+        if not self.ups:
             return
-        while True:
-            await asyncio.sleep(self.delay)
+
+        # Обновление точек до таймаута на сервере
+        for _ in range(self.ups * TIMEOUT):
+            await asyncio.sleep(1 / self.ups)
             await self._update_dots()
+
+        # Уведомление об ошибке
+        await self.edit_message(
+            '*Возникла ошибка на сервере...* :(',
+            parse_mode='markdown',
+            reply_markup=go_to_main_menu_settings_game_keyboard
+        )
 
     async def _update_dots(self):
         """

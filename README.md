@@ -8,4 +8,5 @@
 CHESS_TG_TOKEN=<tg-bot-token>
 API_URL=http://ip:port/api/chess/
 API_AUTH_KEY=<token>
+LOG_CHAT=<chat-id>
 ```

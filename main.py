@@ -2,16 +2,13 @@ from aiogram import Dispatcher, executor
 from loguru import logger
 
 from __init__ import dp
+from src.consts import TIMEOUT
 from src.tg.handlers import register_client_handlers
 from src.tg.middlewares import setup_middlewares
 
 
 async def all_errors(update, error):
-    """
-    Не уверен, что оно поможет хоть с чем-то.
-    """
-
-    logger.error(f'Exception Error: {update=}, {error}')
+    logger.error(f'Exception Error: {error}, {update=}')
 
 
 async def on_startup(dp: Dispatcher):
@@ -22,5 +19,5 @@ async def on_startup(dp: Dispatcher):
 
 if __name__ == '__main__':
     logger.info('Запуск бота...')
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup, timeout=TIMEOUT)
     logger.info('Выключение бота')

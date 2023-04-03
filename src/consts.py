@@ -5,8 +5,10 @@ import httpx
 
 
 API_URL = os.getenv('API_URL')
+TIMEOUT = 30
+
 api_headers = {"Authorization": os.getenv('API_AUTH_KEY')}
-api_session = httpx.AsyncClient(follow_redirects=True, timeout=15)
+api_session = httpx.AsyncClient(follow_redirects=True, timeout=TIMEOUT)
 
 
 class CallbackData(Enum):
