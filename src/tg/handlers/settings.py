@@ -6,8 +6,9 @@ from src.chess_api import get_limits, get_defaults
 from src.db.settings import Settings
 from src.consts import CallbackData
 from src.tg.keyboards import (
-    settings_keyboard, edit_setting_keyboard, cancel_edit_setting_keyboard,
-    are_you_sure_reset_settings_keyboard, go_to_main_menu_settings_game_keyboard
+    simple_settings_keyboard, advanced_settings_keyboard, edit_setting_keyboard,
+    cancel_edit_setting_keyboard, are_you_sure_reset_settings_keyboard,
+    go_to_main_menu_settings_game_keyboard,
 )
 from src.tg.utils.db_funcs import get_settings, update_settings
 
@@ -18,6 +19,17 @@ class EditSetting(StatesGroup):
     """
     edit_setting = State()
 
+
+# Названия простых и продвинутых настроек в базе данных
+simple_settings = (
+    'skill_level', 'elo', 'with_position_evaluation',
+    'with_coords', 'size'
+)
+advanced_settings = (
+    'min_time', 'max_time',
+    'threads', 'depth',
+    'ram_hash', 'colors'
+)
 
 # Перевод параметра настроек на русский
 attr_to_ru_with_description = {
@@ -138,25 +150,23 @@ def format_settings_value(value: str | bool, limit: int = 15) -> str:
     return value
 
 
-def generate_settings_message(user_id: int) -> str:
+def generate_settings_message(user_id: int, settings_attrs: tuple[str, ...] | list[str]) -> str:
     """
-    Делает сообщение со всеми настройками пользователя.
+    Делает сообщение с настройками пользователя.
 
     :param user_id: Юзер айди.
+    :param settings_attrs: Список/Кортеж настроек.
     :return Сообщение.
     """
 
     settings = get_settings(user_id)
 
-    settings_attrs = [
-        attr.replace('EDIT_', '').lower()
-        for attr in dir(CallbackData) if attr.startswith('EDIT_')
-    ]
-    message = [
+    message = (
         f'`{attr_to_ru_with_description[attr][0]:<17}` –  '
         f'*{format_settings_value_by_attr(user_id, attr, settings=settings)}*'
         for attr in settings_attrs
-    ]
+    )
+
     return '\n'.join(message)
 
 
@@ -211,7 +221,14 @@ async def settings_menu(callback: types.CallbackQuery):
     Обработчик кнопки "Настройки".
     """
 
-    settings_message = generate_settings_message(callback.from_user.id)
+    if callback.data.replace(CallbackData.OPEN_SETTINGS.value, ''):
+        settings_attrs = advanced_settings
+        settings_keyboard = advanced_settings_keyboard
+    else:
+        settings_attrs = simple_settings
+        settings_keyboard = simple_settings_keyboard
+
+    settings_message = generate_settings_message(callback.from_user.id, settings_attrs)
     message = '*Настройки!*\nТекущие настройки:\n\n' + settings_message
     await callback.message.reply(
         message,
@@ -226,7 +243,8 @@ async def preview_setting(callback: types.CallbackQuery):
     """
 
     message = await generate_setting_preview_message(
-        callback.from_user.id, attr := callback.data.lower().replace('edit_', '')
+        callback.from_user.id,
+        attr := callback.data.lower().replace(CallbackData.EDIT_PREFIX.value, '')
     )
     await callback.message.reply(
         message,
@@ -366,8 +384,14 @@ async def reset_all_settings(callback: types.CallbackQuery):
 def register_settings(dp: Dispatcher):
     dp.register_callback_query_handler(cancel_state_edit_setting, state=EditSetting)
 
-    dp.register_callback_query_handler(settings_menu, text=CallbackData.OPEN_SETTINGS.value)
-    dp.register_callback_query_handler(preview_setting, lambda callback: callback.data.startswith('edit_'))
+    dp.register_callback_query_handler(
+        settings_menu,
+        lambda callback: callback.data.startswith(CallbackData.OPEN_SETTINGS.value)
+    )
+    dp.register_callback_query_handler(
+        preview_setting,
+        lambda callback: callback.data.startswith(CallbackData.EDIT_PREFIX.value)
+    )
     dp.register_callback_query_handler(
         start_state_edit_setting,
         lambda callback: callback.data.startswith(CallbackData.START_EDIT_SETTING.value)

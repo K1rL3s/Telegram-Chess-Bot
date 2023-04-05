@@ -15,7 +15,8 @@ class CallbackData(Enum):
     OPEN_MAIN_MENU = 'open_main_menu'
     OPEN_GAME_MENU = 'open_game_menu'
     OPEN_RULES_HELP = 'open_rules_help'
-    OPEN_SETTINGS = 'open_settings'
+    OPEN_SETTINGS = 'open_settings_'
+    OPEN_SETTINGS_ADVANCED = OPEN_SETTINGS + '_advanced'  # noqa
     OPEN_STATISTIC = 'open_statistic'
     ABOUT_BOT = 'about_bot'
 
@@ -24,17 +25,18 @@ class CallbackData(Enum):
     START_EDIT_SETTING = 'start_edit_setting_'
     RESET_SETTING = 'reset_setting_'
     STOP_EDIT_SETTING = 'stop_edit_setting'
-    EDIT_MIN_TIME = 'edit_min_time'
-    EDIT_MAX_TIME = 'edit_max_time'
-    EDIT_THREADS = 'edit_threads'
-    EDIT_DEPTH = 'edit_depth'
-    EDIT_RAM_HASH = 'edit_ram_hash'
-    EDIT_SKILL_LEVEL = 'edit_skill_level'
-    EDIT_ELO = 'edit_elo'
-    EDIT_COLORS = 'edit_colors'
-    EDIT_WITH_COORDS = 'edit_with_coords'
-    EDIT_WITH_POSITION_EVALUATION = 'edit_with_position_evaluation'
-    EDIT_SIZE = 'edit_size'
+    EDIT_PREFIX = 'edit_'
+    EDIT_MIN_TIME = EDIT_PREFIX + 'min_time'  # noqa
+    EDIT_MAX_TIME = EDIT_PREFIX + 'max_time'  # noqa
+    EDIT_THREADS = EDIT_PREFIX + 'threads'  # noqa
+    EDIT_DEPTH = EDIT_PREFIX + 'depth'  # noqa
+    EDIT_RAM_HASH = EDIT_PREFIX + 'ram_hash'  # noqa
+    EDIT_SKILL_LEVEL = EDIT_PREFIX + 'skill_level'  # noqa
+    EDIT_ELO = EDIT_PREFIX + 'elo'  # noqa
+    EDIT_COLORS = EDIT_PREFIX + 'colors'  # noqa
+    EDIT_WITH_COORDS = EDIT_PREFIX + 'with_coords'  # noqa
+    EDIT_WITH_POSITION_EVALUATION = EDIT_PREFIX + 'with_position_evaluation'  # noqa
+    EDIT_SIZE = EDIT_PREFIX + 'size'  # noqa
 
     PLAY_OLD_GAME = 'play_old_game'
     PLAY_NEW_GAME = 'play_new_game'

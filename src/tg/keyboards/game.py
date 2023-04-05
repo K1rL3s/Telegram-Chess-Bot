@@ -8,7 +8,7 @@ from src.tg.keyboards.universal import rules_help_button, main_menu_button, stat
 continue_game_button = InlineKeyboardButton('⏯Продолжить игру', callback_data=CallbackData.PLAY_OLD_GAME.value)
 pause_game_button = InlineKeyboardButton('⏸️Пауза', callback_data=CallbackData.OPEN_GAME_MENU.value)
 hint_button = InlineKeyboardButton('💡Подсказка', callback_data=CallbackData.GET_MOVE_TIP.value)
-resign_button = InlineKeyboardButton('🇫🇷Cдаться', callback_data=CallbackData.RESIGN.value)
+resign_button = InlineKeyboardButton('🏳Cдаться', callback_data=CallbackData.RESIGN.value)
 
 
 def pre_game_keyboard(current_game: Game | None) -> InlineKeyboardMarkup:

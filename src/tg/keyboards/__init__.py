@@ -1,5 +1,6 @@
 from src.tg.keyboards.settings import (
-    settings_keyboard, edit_setting_keyboard, cancel_edit_setting_keyboard,
+    simple_settings_keyboard, advanced_settings_keyboard,
+    edit_setting_keyboard, cancel_edit_setting_keyboard,
     are_you_sure_reset_settings_keyboard
 )
 from src.tg.keyboards.universal import (

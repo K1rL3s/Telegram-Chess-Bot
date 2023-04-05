@@ -3,25 +3,31 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from src.consts import CallbackData
 from src.tg.keyboards.universal import main_menu_button
 
-
-settings_keyboard = InlineKeyboardMarkup().row(
+simple_settings_keyboard = InlineKeyboardMarkup().row(
     main_menu_button,
-    InlineKeyboardButton('🔁Вернуть по умолчанию', callback_data=CallbackData.RESET_ALL_SETTINGS.value)
+    InlineKeyboardButton('🔁Сброс', callback_data=CallbackData.RESET_ALL_SETTINGS.value),
+    InlineKeyboardButton('⚙️Продвинутые', callback_data=CallbackData.OPEN_SETTINGS_ADVANCED.value),
+).row(
+    InlineKeyboardButton('🧠Уровень игры', callback_data=CallbackData.EDIT_SKILL_LEVEL.value),
+    InlineKeyboardButton('🧠ЭЛО', callback_data=CallbackData.EDIT_ELO.value),
+    InlineKeyboardButton('🧠Оценка', callback_data=CallbackData.EDIT_WITH_POSITION_EVALUATION.value),
+).row(
+    InlineKeyboardButton('🧭Координаты', callback_data=CallbackData.EDIT_WITH_COORDS.value),
+    InlineKeyboardButton('💥Размеры', callback_data=CallbackData.EDIT_SIZE.value),
+)
+
+advanced_settings_keyboard = InlineKeyboardMarkup().row(
+    main_menu_button,
+    InlineKeyboardButton('⚙️Обычные', callback_data=CallbackData.OPEN_SETTINGS.value),
 ).row(
     InlineKeyboardButton('⌛Минимальное время', callback_data=CallbackData.EDIT_MIN_TIME.value),
     InlineKeyboardButton('⏳Максимальное время', callback_data=CallbackData.EDIT_MAX_TIME.value),
 ).row(
     InlineKeyboardButton('💻Потоки', callback_data=CallbackData.EDIT_THREADS.value),
     InlineKeyboardButton('💻Глубина', callback_data=CallbackData.EDIT_DEPTH.value),
-    InlineKeyboardButton('💻Память', callback_data=CallbackData.EDIT_RAM_HASH.value)
 ).row(
-    InlineKeyboardButton('🧠Уровень игры', callback_data=CallbackData.EDIT_SKILL_LEVEL.value),
-    InlineKeyboardButton('🧠ЭЛО', callback_data=CallbackData.EDIT_ELO.value),
-    InlineKeyboardButton('🧠Оценка', callback_data=CallbackData.EDIT_WITH_POSITION_EVALUATION.value)
-).row(
+    InlineKeyboardButton('💻Память', callback_data=CallbackData.EDIT_RAM_HASH.value),
     InlineKeyboardButton('🌈Цвета', callback_data=CallbackData.EDIT_COLORS.value),
-    InlineKeyboardButton('🧭Координаты', callback_data=CallbackData.EDIT_WITH_COORDS.value),
-    InlineKeyboardButton('💥Размеры', callback_data=CallbackData.EDIT_SIZE.value)
 )
 
 are_you_sure_reset_settings_keyboard = InlineKeyboardMarkup().row(
