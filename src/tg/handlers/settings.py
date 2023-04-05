@@ -8,8 +8,9 @@ from src.consts import CallbackData
 from src.tg.keyboards import (
     simple_settings_keyboard, advanced_settings_keyboard, edit_setting_keyboard,
     cancel_edit_setting_keyboard, are_you_sure_reset_settings_keyboard,
-    go_to_main_menu_settings_game_keyboard,
+    get_main_menu_settings_game_keyboard,
 )
+from src.tg.keyboards.universal import advanced_settings_button, settings_button
 from src.tg.utils.db_funcs import get_settings, update_settings
 
 
@@ -259,12 +260,16 @@ async def reset_current_setting(callback: types.CallbackQuery):
     """
 
     attr = callback.data.replace(CallbackData.RESET_SETTING.value, '').lower()
+
     default = (await get_defaults())[attr]
     new_value = (await update_settings(callback.from_user.id, **{attr: default}))[attr]
+
     name = attr_to_ru_with_description[attr][0]
+    setting_button = settings_button if attr in simple_settings else advanced_settings_button
+
     await callback.message.reply(
             succes_edit_message(name, format_settings_value(new_value, limit=0)),
-            reply_markup=go_to_main_menu_settings_game_keyboard,
+            reply_markup=get_main_menu_settings_game_keyboard(setting_button),
             parse_mode='markdown'
         )
 
@@ -309,7 +314,7 @@ async def edit_bool_setting(message: types.Message, user_id: int, attr: str):
     )
 
 
-async def edit_setting(message: types.Message, state: FSMContext, text: str = None):
+async def edit_setting(message: types.Message, state: FSMContext):
     """
     Обработчик сообщения после начала изменения любого параметра настроек.
     """
@@ -317,8 +322,7 @@ async def edit_setting(message: types.Message, state: FSMContext, text: str = No
     async with state.proxy() as data:
         attr = data['attr']
 
-    if text is None:
-        text = message.text.lower()
+    text = message.text.lower()
 
     if isinstance(format_settings_value_by_attr(message.from_user.id, attr), str):
         if 'color' in attr:
@@ -335,13 +339,16 @@ async def edit_setting(message: types.Message, state: FSMContext, text: str = No
             reply_markup=edit_setting_keyboard(attr),
             parse_mode='markdown'
         )
-    else:
-        new_value = (await update_settings(message.from_user.id, **{attr: value}))[attr]
-        await message.reply(
-            succes_edit_message(name, format_settings_value(new_value, limit=0)),
-            reply_markup=go_to_main_menu_settings_game_keyboard,
-            parse_mode='markdown'
-        )
+        return
+
+    new_value = (await update_settings(message.from_user.id, **{attr: value}))[attr]
+    setting_button = settings_button if attr in simple_settings else advanced_settings_button
+
+    await message.reply(
+        succes_edit_message(name, format_settings_value(new_value, limit=0)),
+        reply_markup=get_main_menu_settings_game_keyboard(setting_button),
+        parse_mode='markdown'
+    )
 
     await state.finish()
 
@@ -353,9 +360,12 @@ async def cancel_state_edit_setting(callback: types.CallbackQuery, state: FSMCon
 
     async with state.proxy() as data:
         attr = data["attr"]
+
+    setting_button = settings_button if attr in simple_settings else advanced_settings_button
+
     await callback.message.reply(
         f'Изменение *"{attr_to_ru_with_description[attr][0]}"* отменено',
-        reply_markup=go_to_main_menu_settings_game_keyboard,
+        reply_markup=get_main_menu_settings_game_keyboard(setting_button),
         parse_mode='markdown'
     )
     await state.finish()
@@ -363,10 +373,11 @@ async def cancel_state_edit_setting(callback: types.CallbackQuery, state: FSMCon
 
 async def reset_all_settings(callback: types.CallbackQuery):
     """
-    Обработчик подтверждения сброса настроек.
+    Обработчик подтверждения сброса всех настроек.
     """
 
     is_sure = callback.data.replace(CallbackData.RESET_ALL_SETTINGS.value, '')
+
     if not is_sure:
         await callback.message.reply(
             "Вы уверены, что хотите сбросить все настройки на значения по умолчанию?",
@@ -377,7 +388,7 @@ async def reset_all_settings(callback: types.CallbackQuery):
     await update_settings(callback.from_user.id, **(await get_defaults()))
     await callback.message.reply(
         "Настройки сброшены на значения по умолчанию",
-        reply_markup=go_to_main_menu_settings_game_keyboard
+        reply_markup=get_main_menu_settings_game_keyboard()
     )
 
 

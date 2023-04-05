@@ -3,7 +3,7 @@ import asyncio
 from aiogram import types
 
 from src.consts import TIMEOUT
-from src.tg.keyboards import go_to_main_menu_settings_game_keyboard
+from src.tg.keyboards import get_main_menu_settings_game_keyboard
 
 
 class LoadingMessage:
@@ -43,7 +43,7 @@ class LoadingMessage:
         await self.edit_message(
             '*Возникла ошибка на сервере...* :(',
             parse_mode='markdown',
-            reply_markup=go_to_main_menu_settings_game_keyboard
+            reply_markup=get_main_menu_settings_game_keyboard()
         )
 
     async def _update_dots(self):

@@ -5,7 +5,7 @@ from src.tg.keyboards.settings import (
 )
 from src.tg.keyboards.universal import (
     start_keyboard, main_menu_keyboard, back_to_main_menu_keyboard,
-    go_to_main_menu_settings_game_keyboard
+    get_main_menu_settings_game_keyboard
 )
 from src.tg.keyboards.game import (
     pre_game_keyboard, choose_color_keyboard, game_conitnue_keyboard,

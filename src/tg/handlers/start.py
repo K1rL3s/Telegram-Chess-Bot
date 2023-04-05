@@ -1,8 +1,10 @@
 from aiogram import types, Dispatcher
 
 from src.consts import CallbackData
-from src.tg.keyboards import start_keyboard, main_menu_keyboard, back_to_main_menu_keyboard, \
-    go_to_main_menu_settings_game_keyboard
+from src.tg.keyboards import (
+    start_keyboard, main_menu_keyboard,
+    back_to_main_menu_keyboard, get_main_menu_settings_game_keyboard,
+)
 from src.tg.utils.db_funcs import create_new_user, get_user
 
 
@@ -67,7 +69,7 @@ async def rules_help(message: types.Message | types.CallbackQuery):
         message = message.message
     await message.reply(
         rules_help_message,
-        reply_markup=go_to_main_menu_settings_game_keyboard,
+        reply_markup=get_main_menu_settings_game_keyboard(),
         parse_mode='markdown'
     )
 
@@ -88,7 +90,7 @@ async def statistic(callback: types.CallbackQuery):
     await callback.message.reply(
         message,
         parse_mode='markdown',
-        reply_markup=go_to_main_menu_settings_game_keyboard
+        reply_markup=get_main_menu_settings_game_keyboard()
     )
 
 
