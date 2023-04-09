@@ -1,5 +1,5 @@
 from src.chess_api.utils import EngineMove, async_requests_catch, async_logger_wraps, abort
-from src.consts import API_URL, api_headers, api_session
+from src.consts import Config
 
 
 @async_logger_wraps()
@@ -27,7 +27,10 @@ async def get_engine_move(
         "orientation": orientation,
         **params
     }
-    response = await api_session.get(API_URL + 'move', params=params, headers=api_headers)
+    response = await Config.api_session.get(
+        Config.API_URL + 'move',
+        params=params, headers=Config.api_headers
+    )
 
     if response.status_code != 200:
         if 'illegal' in (message := response.json()["message"]):

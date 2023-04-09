@@ -1,4 +1,4 @@
-SQLAlchemy==2.0.8
+SQLAlchemy==2.0.9
 python-dotenv==1.0.0
 aiogram==2.25.1
 pathlib==1.0.1

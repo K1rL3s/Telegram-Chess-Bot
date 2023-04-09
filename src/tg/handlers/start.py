@@ -39,6 +39,7 @@ async def main_menu(message: types.Message | types.CallbackQuery):
 
     if isinstance(message, types.CallbackQuery):
         message = message.message
+
     await message.reply(
         "Привет, я - *меню!*",
         reply_markup=main_menu_keyboard,
@@ -53,6 +54,7 @@ async def about(message: types.Message | types.CallbackQuery):
 
     if isinstance(message, types.CallbackQuery):
         message = message.message
+
     await message.reply(
         about_message,
         reply_markup=back_to_main_menu_keyboard,
@@ -67,6 +69,7 @@ async def rules_help(message: types.Message | types.CallbackQuery):
 
     if isinstance(message, types.CallbackQuery):
         message = message.message
+
     await message.reply(
         rules_help_message,
         reply_markup=get_main_menu_settings_game_keyboard(),
@@ -98,7 +101,7 @@ def register_start(dp: Dispatcher):
     dp.register_message_handler(start, commands=['start'])
 
     dp.register_callback_query_handler(main_menu, text=CallbackData.OPEN_MAIN_MENU.value)
-    dp.register_message_handler(main_menu, commands=['menu'])
+    dp.register_message_handler(main_menu, commands=['menu', 'меню'])
 
     dp.register_callback_query_handler(about, text=CallbackData.ABOUT_BOT.value)
     dp.register_message_handler(about, commands=['about'])

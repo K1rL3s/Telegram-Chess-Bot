@@ -1,13 +1,10 @@
 import functools
-import os
 
 from aiogram.dispatcher.handler import CancelHandler
 from loguru import logger
 from httpx import RequestError
 
 from src.tg.utils.log_in_chat import log_in_chat
-
-LOG_CHAT = os.environ.get('LOG_CHAT')
 
 
 def get_func_name(func):

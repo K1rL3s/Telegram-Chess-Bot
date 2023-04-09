@@ -2,7 +2,7 @@ import asyncio
 
 from aiogram import types
 
-from src.consts import TIMEOUT
+from src.consts import Config
 from src.tg.keyboards import get_main_menu_settings_game_keyboard
 
 
@@ -35,7 +35,7 @@ class LoadingMessage:
             return
 
         # Обновление точек до таймаута на сервере
-        for _ in range(self.ups * TIMEOUT):
+        for _ in range(self.ups * Config.TIMEOUT):
             await asyncio.sleep(1 / self.ups)
             await self._update_dots()
 

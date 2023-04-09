@@ -1,5 +1,5 @@
 from src.chess_api.utils import EngineEvaluation, async_requests_catch, async_logger_wraps, abort
-from src.consts import API_URL, api_headers, api_session
+from src.consts import Config
 
 
 @async_logger_wraps()
@@ -24,7 +24,10 @@ async def get_engine_evaluation(
         "fen": fen,
         "prev_moves": prev_moves
     }
-    response = await api_session.get(API_URL + 'position', params=params, headers=api_headers)
+    response = await Config.api_session.get(
+        Config.API_URL + 'position',
+        params=params, headers=Config.api_headers
+    )
 
     if response.status_code != 200:
         return abort(response.json()["message"])

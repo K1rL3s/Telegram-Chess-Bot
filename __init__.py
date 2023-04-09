@@ -1,17 +1,14 @@
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 from loguru import logger
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
+from src.consts import Config
 from src.db import db_session
 
 
-load_dotenv()
-
-abs_path = Path().absolute()
+abs_path = Path(__file__).absolute().parent
 
 logger.add(
     abs_path / 'logs' / 'logs.log',
@@ -27,5 +24,5 @@ db_sess = db_session.create_session()
 
 storage = MemoryStorage()
 
-bot = Bot(token=os.getenv("CHESS_TG_TOKEN"))
+bot = Bot(token=Config.CHESS_TG_TOKEN)
 dp = Dispatcher(bot=bot, storage=storage)

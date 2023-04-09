@@ -1,14 +1,25 @@
 import os
 from enum import Enum
 
+from dotenv import load_dotenv
+
 import httpx
 
 
-API_URL = os.getenv('API_URL')
-TIMEOUT = 30
+load_dotenv()
 
-api_headers = {"Authorization": os.getenv('API_AUTH_KEY')}
-api_session = httpx.AsyncClient(follow_redirects=True, timeout=TIMEOUT)
+
+class Config:
+    CHESS_TG_TOKEN = os.environ["CHESS_TG_TOKEN"]
+    API_URL = os.environ["API_URL"]
+    LOG_CHAT = os.environ.get('LOG_CHAT')
+
+    # Начальная позиция в шахматах по FEN
+    start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    TIMEOUT = 30
+
+    api_headers = {"Authorization": os.environ['API_AUTH_KEY']}
+    api_session = httpx.AsyncClient(follow_redirects=True, timeout=TIMEOUT)
 
 
 class CallbackData(Enum):
@@ -48,3 +59,9 @@ class CallbackData(Enum):
     GET_MOVE_TIP = GAME_STATE_PREFIX + 'get_move_tip'  # noqa
     RESIGN = GAME_STATE_PREFIX + 'resign'  # noqa
     RESIGN_SURE = RESIGN + '_sure'  # noqa
+
+
+class Emojies(Enum):
+    YES_EMOJI = "✅"
+    NO_EMOJI = "❌"
+

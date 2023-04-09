@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from src.chess_api import get_limits, get_defaults
 from src.db.settings import Settings
-from src.consts import CallbackData
+from src.consts import CallbackData, Emojies
 from src.tg.keyboards import (
     simple_settings_keyboard, advanced_settings_keyboard, edit_setting_keyboard,
     cancel_edit_setting_keyboard, are_you_sure_reset_settings_keyboard,
@@ -136,11 +136,11 @@ def format_settings_value(value: str | bool, limit: int = 15) -> str:
 
     :param value:
     :param limit:
-    :return:
+    :return: Красиво.
     """
 
-    if isinstance(value, bool):
-        return "✅" if value else "❌"
+    if isinstance(value, bool):  # Если настройка булевского типа
+        return Emojies.YES_EMOJI.value if value else Emojies.NO_EMOJI.value
 
     if value is None:
         value = 'по умолчанию'
