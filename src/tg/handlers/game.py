@@ -104,13 +104,14 @@ async def color_chosen(callback: types.CallbackQuery):
         text = 'Прошлая игра завершена, *новая создана...*'
     else:
         text = '*Новая игра создана...*'
-    await loading_message.edit_message(text, parse_mode='markdown')
+    await loading_message.edit_text(text, parse_mode='markdown')
 
     if color == 'b':
         state = await ChessGame.playing.set()  # state = None
         await user_move(callback, state, is_user_black=True)
     else:
         await continue_old_game(callback)
+
     await loading_message.delete()
 
 
@@ -180,7 +181,7 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     )
 
     if data is None:
-        await loading_message.edit_message(
+        await loading_message.edit_text(
             'Это *нелегальный* ход',
             parse_mode='markdown',
             reply_markup=illegal_move_keyboard
@@ -238,10 +239,10 @@ async def move_tip(callback: types.CallbackQuery, state: FSMContext):
     data = await get_engine_move(
         user_move=None,
         prev_moves=game.prev_moves,
-        orientation='b',
+        orientation='b',  # kostil
         **settings.get_params()
     )
-    await loading_message.edit_message(
+    await loading_message.edit_text(
         f'Я бы сделал ход "*{data.stockfish_move}*"',
         parse_mode='markdown',
         reply_markup=after_tip_keyboard
@@ -265,7 +266,7 @@ async def resign(callback: types.CallbackQuery, state: FSMContext):
 
     loading_message = await create_loading_message(callback.message, 'Завершение игры...')
     message = await stop_game(callback.from_user.id)
-    await loading_message.edit_message(
+    await loading_message.edit_text(
         message,
         parse_mode='markdown',
         reply_markup=game_end_keyboard

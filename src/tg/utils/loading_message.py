@@ -40,7 +40,7 @@ class LoadingMessage:
             await self._update_dots()
 
         # Уведомление об ошибке
-        await self.edit_message(
+        await self.edit_text(
             '*Возникла ошибка на сервере...* :(',
             parse_mode='markdown',
             reply_markup=get_main_menu_settings_game_keyboard()
@@ -57,12 +57,13 @@ class LoadingMessage:
 
         await self.message.edit_text(f'*{self.text}*', parse_mode='markdown')
 
-    async def edit_message(self, *args, **kwargs):
+    @property
+    def edit_text(self):
         """
         Изменение этого сообщения "извне".
         """
         self._future.cancel()
-        await self.message.edit_text(*args, **kwargs)
+        return self.message.edit_text
 
     async def delete(self):
         """
