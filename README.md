@@ -58,7 +58,9 @@ python ./main.py
 ```
 
 ### Скриншоты работы
-...
+![Telegram_WIFil9xgVJ](https://user-images.githubusercontent.com/104463209/233860960-e93ebf81-3e7d-4117-b385-7782fa9ec99e.png)
+![Telegram_uX4z1D1z0H](https://user-images.githubusercontent.com/104463209/233860961-ab0b1102-d3d5-466c-9e19-581e13f3d0aa.png)
+![Telegram_FaI7A4F93h](https://user-images.githubusercontent.com/104463209/233860963-3586a13a-91e7-495d-acb3-b827b365b685.png)
 
 
 ### Пояснительная часть
