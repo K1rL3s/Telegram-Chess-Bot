@@ -15,7 +15,7 @@ class Config:
     LOG_CHAT = os.environ.get('LOG_CHAT')
 
     # Начальная позиция в шахматах по FEN
-    start_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
     TIMEOUT = 30
 
     api_headers = {"Authorization": os.environ['API_AUTH_KEY']}
@@ -27,7 +27,7 @@ class CallbackData(Enum):
     OPEN_GAME_MENU = 'open_game_menu'
     OPEN_RULES_HELP = 'open_rules_help'
     OPEN_SETTINGS = 'open_settings_'
-    OPEN_SETTINGS_ADVANCED = OPEN_SETTINGS + '_advanced'  # noqa
+    OPEN_SETTINGS_ADVANCED = OPEN_SETTINGS + 'advanced'  # noqa
     OPEN_STATISTIC = 'open_statistic'
     ABOUT_BOT = 'about_bot'
 

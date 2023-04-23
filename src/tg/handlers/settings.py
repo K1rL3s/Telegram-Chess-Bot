@@ -335,8 +335,8 @@ async def edit_setting(message: types.Message, state: FSMContext):
     name = attr_to_ru_with_description[attr][0]
     if value is None:
         await message.reply(
-            f'*{name}*\nНе удалось обработать это сообщение',
-            reply_markup=edit_setting_keyboard(attr),
+            f'*{name}*\nНе удалось обработать это сообщение, попробуйте ещё раз',
+            reply_markup=cancel_edit_setting_keyboard,
             parse_mode='markdown'
         )
         return

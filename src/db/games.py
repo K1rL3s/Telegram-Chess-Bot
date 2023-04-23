@@ -16,7 +16,7 @@ class Game(BaseModel):
     prev_moves = Column(String)
     last_move = Column(String)
     check = Column(String)
-    fen = Column(String, default=Config.start_fen, nullable=False)
+    fen = Column(String, default=Config.START_FEN, nullable=False)
     who_win = Column(String, default=None)
     created_time = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     modified_time = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow,
