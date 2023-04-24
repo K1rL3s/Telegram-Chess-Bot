@@ -6,7 +6,7 @@ from src.consts import Config
 
 @async_logger_wraps()
 @async_requests_catch
-@cached(ttl=600)
+@cached(ttl=Config.CACHE_LIMIT_REQUEST)
 async def get_limits() -> dict[str, dict[str, int]]:
     """
     Возвращает серверные лимиты шахматного движка.
@@ -31,5 +31,5 @@ async def get_defaults() -> dict[str, int]:
     """
 
     defaults = {param: dct["default"] for param, dct in (await get_limits()).items()}
-    defaults.update({'with_coords': True, 'with_position_evaluation': False, 'colors': None})
+    defaults.update({'with_coords': True, 'colors': None})
     return defaults

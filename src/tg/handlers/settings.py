@@ -23,7 +23,7 @@ class EditSetting(StatesGroup):
 
 # Названия простых и продвинутых настроек в базе данных
 simple_settings = (
-    'skill_level', 'elo', 'with_position_evaluation',
+    'skill_level', 'elo',
     'with_coords', 'size'
 )
 advanced_settings = (
@@ -69,10 +69,6 @@ attr_to_ru_with_description = {
     "with_coords": (
         "Координаты",
         "С координатами поле или без\nМеняет изображение доски"
-    ),
-    "with_position_evaluation": (
-        "Оценка",
-        "Оценивать ли позицию после каждого хода\nУвеличивает время ответа!"
     ),
     "size": (
         "Размер (пискели)",
@@ -157,7 +153,7 @@ def generate_settings_message(user_id: int, settings_attrs: tuple[str, ...] | li
 
     :param user_id: Юзер айди.
     :param settings_attrs: Список/Кортеж настроек.
-    :return Сообщение.
+    :return: Сообщение.
     """
 
     settings = get_settings(user_id)

@@ -9,6 +9,10 @@ advanced_settings_button = InlineKeyboardButton('⚙️Настройки', call
 rules_help_button = InlineKeyboardButton('📜Правила', callback_data=CallbackData.OPEN_RULES_HELP.value)
 game_menu_button = InlineKeyboardButton('♟️Играть', callback_data=CallbackData.OPEN_GAME_MENU.value)
 statistics_button = InlineKeyboardButton('📃Статистика', callback_data=CallbackData.OPEN_STATISTIC.value)
+global_statistics_button = InlineKeyboardButton(
+    '📃Общая статистика',
+    callback_data=CallbackData.OPEN_GLOBAL_STATISTIC.value
+)
 
 
 start_keyboard = InlineKeyboardMarkup().row(
@@ -26,6 +30,14 @@ main_menu_keyboard = InlineKeyboardMarkup().row(
 
 back_to_main_menu_keyboard = InlineKeyboardMarkup().row(
     main_menu_button
+)
+
+after_stats_keyboard = InlineKeyboardMarkup().row(
+    main_menu_button,
+    settings_button,
+    game_menu_button,
+).row(
+    global_statistics_button,
 )
 
 def get_main_menu_settings_game_keyboard(setting_button: InlineKeyboardButton = settings_button):

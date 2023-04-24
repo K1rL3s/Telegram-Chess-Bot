@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Integer, DateTime, Column, Boolean
+from sqlalchemy import Integer, DateTime, Column, Boolean, String
 from sqlalchemy.orm import relationship
 
 from src.db.base_model import BaseModel
@@ -11,6 +11,7 @@ class User(BaseModel):
 
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
     user_id = Column(Integer, nullable=False, unique=True, index=True)
+    name = Column(String, nullable=False)
     total_games = Column(Integer, default=0, nullable=False)
     total_wins = Column(Integer, default=0, nullable=False)
     total_defeats = Column(Integer, default=0, nullable=False)

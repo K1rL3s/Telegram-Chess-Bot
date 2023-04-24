@@ -75,14 +75,14 @@ class LoadingMessage:
 
 async def create_loading_message(
         reply_to: types.Message,
-        wait_message: str = '*Загрузка...*',
-        ups: int = 3,
+        wait_message: str = 'Загрузка...',
+        ups: int = Config.UPS,
 ) -> LoadingMessage:
     """
     :param reply_to: Сообщение, на кнопку которого нажали / Сообщение юзера с ходом.
     :param wait_message: Текст, который будет в сообщении при загрузке. Без *.
     :param ups: Сколько раз в секунду обновлять точки в конце сообщения.
-    :return Экземпляр класса LoadingMessage
+    :return: Экземпляр класса LoadingMessage
     """
 
     loading_message = LoadingMessage(reply_to, wait_message, ups)

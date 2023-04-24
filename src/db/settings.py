@@ -34,7 +34,7 @@ class Settings(BaseModel):
     elo = Column(Integer, nullable=False)
     colors = Column(String)  # ?
     with_coords = Column(Boolean, default=True, nullable=False)
-    with_position_evaluation = Column(Boolean, default=False, nullable=True)
+    # with_position_evaluation = Column(Boolean, default=False, nullable=True)
     size = Column(Integer, nullable=False)
     modified_time = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow,
                            nullable=False)
@@ -61,7 +61,7 @@ class Settings(BaseModel):
             "elo": self.elo,
             "with_coords": self.with_coords,
             "colors": self.colors,
-            "with_position_evaluation": self.with_position_evaluation,
+            # "with_position_evaluation": self.with_position_evaluation,
             "with_engine": True,
             "size": self.size
         }
@@ -79,7 +79,7 @@ class Settings(BaseModel):
             elo=self.elo,
             colors=self.colors,
             with_coords=self.with_coords,
-            with_position_evaluation=self.with_position_evaluation,
+            # with_position_evaluation=self.with_position_evaluation,
             size=self.size,
             modified_time=self.modified_time
         )

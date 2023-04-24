@@ -1,23 +1,26 @@
 import sqlalchemy as sa
+from aiocache import cached
 
 from src.chess_api import get_engine_evaluation, get_limits
 from src.chess_api.utils import EngineEvaluation
+from src.consts import Config
 from src.db.db_session import create_session
 from src.db.__all_models import User, Settings, Game
 
 
-async def create_new_user(user_id: int) -> None:
+async def create_new_user(user_id: int, name: str) -> None:
     """
     Создаёт нового юзера.
 
     :param user_id: Юзер айди.
+    :param name: Имя пользователя
     """
 
     db_sess = create_session()
     if get_user(user_id):
         return
 
-    user = User(user_id=user_id)
+    user = User(user_id=user_id, name=name)
     db_sess.add(user)
 
     settings = Settings(user_id=user_id)
@@ -100,7 +103,7 @@ async def stop_current_game(user_id: int) -> EngineEvaluation | None:
     Останавливает текущую игру и возвращает оценку позиции от движка.
 
     :param user_id: Юзер айди.
-    :return dict если игра есть, None если не юзер не играет.
+    :return: dict если игра есть, None если не юзер не играет.
     """
 
     db_sess = create_session()
@@ -188,7 +191,7 @@ async def update_settings(user_id: int, **params) -> dict:
 
     :param user_id: Юзер айди.
     :param params: Настройки.
-    :return новые значения:
+    :return: Новые значения.
     """
 
     db_sess = create_session()
@@ -209,3 +212,24 @@ async def update_settings(user_id: int, **params) -> dict:
     db_sess.commit()
 
     return params
+
+
+@cached(ttl=Config.CACHE_GLOBAL_TOP)
+async def get_global_statistic() -> str:
+    """
+    Возвращает топ Config.GLOBAL_TOP игроков в отформатированном виде.
+    """
+    db_sess = create_session()
+
+    query = sa.select(User).order_by(
+        sa.desc(User.total_wins),
+        sa.desc(User.total_games),
+        User.created_time,
+    ).limit(Config.GLOBAL_TOP)
+    users = db_sess.scalars(query)
+
+    message = '\n'.join((
+        f'[{user.name}](tg://user?id={user.user_id}) - {user.total_wins} побед, {user.total_games} игр'
+        for user in users
+    ))
+    return message

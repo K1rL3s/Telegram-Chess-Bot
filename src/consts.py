@@ -13,6 +13,10 @@ class Config:
     CHESS_TG_TOKEN = os.environ["CHESS_TG_TOKEN"]
     API_URL = os.environ["API_URL"]
     LOG_CHAT = os.environ.get('LOG_CHAT')
+    UPS = int(os.environ.get('UPS') or 0)
+    CACHE_LIMIT_REQUEST = int(os.environ.get('CACHE_LIMIT_REQUEST') or 0)
+    CACHE_GLOBAL_TOP = int(os.environ.get('CACHE_GLOBAL_TOP') or 0)
+    GLOBAL_TOP = int(os.environ.get('GLOBAL_TOP') or 10)
 
     # Начальная позиция в шахматах по FEN
     START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
@@ -29,6 +33,7 @@ class CallbackData(Enum):
     OPEN_SETTINGS = 'open_settings_'
     OPEN_SETTINGS_ADVANCED = OPEN_SETTINGS + 'advanced'  # noqa
     OPEN_STATISTIC = 'open_statistic'
+    OPEN_GLOBAL_STATISTIC = 'open_global_statistic'
     ABOUT_BOT = 'about_bot'
 
     RESET_ALL_SETTINGS = 'reset_all_settings'
@@ -46,7 +51,6 @@ class CallbackData(Enum):
     EDIT_ELO = EDIT_PREFIX + 'elo'  # noqa
     EDIT_COLORS = EDIT_PREFIX + 'colors'  # noqa
     EDIT_WITH_COORDS = EDIT_PREFIX + 'with_coords'  # noqa
-    EDIT_WITH_POSITION_EVALUATION = EDIT_PREFIX + 'with_position_evaluation'  # noqa
     EDIT_SIZE = EDIT_PREFIX + 'size'  # noqa
 
     PLAY_OLD_GAME = 'play_old_game'
@@ -59,6 +63,7 @@ class CallbackData(Enum):
     GET_MOVE_TIP = GAME_STATE_PREFIX + 'get_move_tip'  # noqa
     RESIGN = GAME_STATE_PREFIX + 'resign'  # noqa
     RESIGN_SURE = RESIGN + '_sure'  # noqa
+    GET_POSITION_EVALUATION = GAME_STATE_PREFIX + 'get_position_evaluation'  # noqa
 
 
 class Emojies(Enum):

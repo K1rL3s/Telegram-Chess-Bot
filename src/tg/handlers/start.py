@@ -4,13 +4,14 @@ from src.consts import CallbackData
 from src.tg.keyboards import (
     start_keyboard, main_menu_keyboard,
     back_to_main_menu_keyboard, get_main_menu_settings_game_keyboard,
+    after_stats_keyboard,
 )
-from src.tg.utils.db_funcs import create_new_user, get_user
-
+from src.tg.utils.db_funcs import create_new_user, get_user, get_global_statistic
 
 about_message = """
 Привет! 👋
 Я [шахматный чат-бот проект](https://github.com/K1rL3s/Telegram-Chess-Bot) для Яндекс Лицея 2022/2023.
+Если я не отвечаю после открытия настроек или тому подобное, то напиши /start
 """
 
 rules_help_message = """
@@ -31,7 +32,10 @@ async def start(message: types.Message):
     Обработчик /start.
     """
 
-    await create_new_user(message.from_user.id)
+    await create_new_user(
+        message.from_user.id,
+        message.from_user.username or message.from_user.first_name or message.from_user.last_name  # XD
+    )
     await message.reply(about_message, reply_markup=start_keyboard, parse_mode='markdown')
 
 
@@ -43,8 +47,11 @@ async def main_menu(message: types.Message | types.CallbackQuery):
     if isinstance(message, types.CallbackQuery):
         message = message.message
 
+    text = "Привет, я - *меню!*\n"\
+           "Если я не отвечаю после открытия настроек или тому подобное, то напиши /start"
+
     await message.reply(
-        "Привет, я - *меню!*",
+        text,
         reply_markup=main_menu_keyboard,
         parse_mode='markdown'
     )
@@ -96,6 +103,19 @@ async def statistic(callback: types.CallbackQuery):
     await callback.message.reply(
         message,
         parse_mode='markdown',
+        reply_markup=after_stats_keyboard
+    )
+
+
+async def global_statistic(callback: types.CallbackQuery):
+    """
+    Обработчик нажатия кнопки "Общая Статистика".
+    """
+
+    top_users = await get_global_statistic()
+    await callback.message.reply(
+        top_users,
+        parse_mode='markdown',
         reply_markup=get_main_menu_settings_game_keyboard()
     )
 
@@ -113,3 +133,7 @@ def register_start(dp: Dispatcher):
     dp.register_message_handler(rules_help, commands=['rules', 'правила'])
 
     dp.register_callback_query_handler(statistic, text=CallbackData.OPEN_STATISTIC.value)
+    dp.register_callback_query_handler(
+        global_statistic,
+        text=CallbackData.OPEN_GLOBAL_STATISTIC.value
+    )

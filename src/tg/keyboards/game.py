@@ -34,8 +34,10 @@ choose_color_keyboard = InlineKeyboardMarkup().row(
 
 game_conitnue_keyboard = InlineKeyboardMarkup().row(
     pause_game_button,
+    resign_button,
+).row(
+    InlineKeyboardButton('🧠Оценка', callback_data=CallbackData.GET_POSITION_EVALUATION.value),
     hint_button,
-    resign_button
 )
 
 illegal_move_keyboard = InlineKeyboardMarkup().row(

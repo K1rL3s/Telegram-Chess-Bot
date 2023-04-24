@@ -48,21 +48,30 @@ async def stop_game(user_id: int) -> str:
     return message('ничьёй')
 
 
-async def get_evaluation_comment(game: Game) -> str:
+async def get_evaluation(callback: types.CallbackQuery, state: FSMContext):
     """
-    Даёт сообщение с оценкой позиции, нужно при Settings.with_position_evaluation == True
-
-    :param game: Текушая игра.
-    :return: Сообщение с оценкой позиции.
+    Даёт сообщение с оценкой позиции, обработчик кнопки "Оценка" во время игры.
     """
 
+    loading_message = await create_loading_message(callback.message, 'Получение оценки...')
+
+    game = get_current_game(callback.from_user.id)
     evaluation = await get_engine_evaluation(fen=game.fen)
-    return '\n' + '\n'.join((
+
+    text = '\n'.join((
         f'*Оценка позиции*',
         f'Тип оценки: *{evaluation.end_type}*',
         f'Значение: *{evaluation.value / 100 if evaluation.end_type == "cp" else evaluation.value}*',
-        f'W/D/L: *{" / ".join(map(str, evaluation.wdl))}*'
+        f'W/D/L: *{" / ".join(map(str, evaluation.wdl))}*',
+        f'[lichess.org](https://lichess.org/analysis/{game.fen}'
+        f'?color={"white" if game.orientation == "w" else "black"})'
     ))
+
+    await loading_message.edit_text(
+        text,
+        parse_mode='markdown',
+        reply_markup=game_conitnue_keyboard
+    )
 
 
 async def pre_game_menu(callback: types.CallbackQuery):
@@ -141,9 +150,6 @@ async def continue_old_game(callback: types.CallbackQuery):
     else:
         caption = i_move_your_turn(game.last_move)
 
-    if settings.with_position_evaluation:
-        caption += await get_evaluation_comment(game)
-
     await callback.message.reply_photo(
         image,
         caption,
@@ -210,9 +216,6 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     else:
         keyboard = game_conitnue_keyboard
         caption = i_move_your_turn(data.stockfish_move)
-
-        if settings.with_position_evaluation:
-            caption += await get_evaluation_comment(game)
 
     if isinstance(message, types.CallbackQuery):  # kostil
         message = message.message
@@ -288,6 +291,11 @@ def register_game(dp: Dispatcher):
     dp.register_callback_query_handler(
         move_tip,
         text=CallbackData.GET_MOVE_TIP.value,
+        state=ChessGame.playing
+    )
+    dp.register_callback_query_handler(
+        get_evaluation,
+        text=CallbackData.GET_POSITION_EVALUATION.value,
         state=ChessGame.playing
     )
     dp.register_callback_query_handler(

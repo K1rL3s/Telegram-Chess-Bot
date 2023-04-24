@@ -10,7 +10,6 @@ simple_settings_keyboard = InlineKeyboardMarkup().row(
 ).row(
     InlineKeyboardButton('🧠Уровень игры', callback_data=CallbackData.EDIT_SKILL_LEVEL.value),
     InlineKeyboardButton('🧠ЭЛО', callback_data=CallbackData.EDIT_ELO.value),
-    InlineKeyboardButton('🧠Оценка', callback_data=CallbackData.EDIT_WITH_POSITION_EVALUATION.value),
 ).row(
     InlineKeyboardButton('🧭Координаты', callback_data=CallbackData.EDIT_WITH_COORDS.value),
     InlineKeyboardButton('💥Размеры', callback_data=CallbackData.EDIT_SIZE.value),
