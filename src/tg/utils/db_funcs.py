@@ -227,8 +227,6 @@ async def get_global_statistic() -> str:
     query = sa.select(User).order_by(
         sa.desc(User.total_wins),
         User.created_time,
-    ).where(
-        User.total_games != 0,
     ).limit(
         Config.GLOBAL_TOP
     )
@@ -237,11 +235,11 @@ async def get_global_statistic() -> str:
 
     message = '\n'.join(
         [
-            '*Ник/W/D/L/Total/WinRate*',
+            '*Ник - W/D/L/Total - WinRate*',
             *(
                 f'[{user.name}](tg://user?id={user.user_id}) - '
                 f'{user.total_wins}/{user.total_draws}/{user.total_defeats}'
-                f'/{user.total_games} - {user.total_wins / user.total_games * 100:.0f}%'
+                f'/{user.total_games} - {user.total_wins / (user.total_games or 1) * 100:.0f}%'
                 for user in users
             ),
             f'\nСтатистика обновляется раз в *{Config.CACHE_GLOBAL_TOP} секунд*'

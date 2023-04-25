@@ -102,7 +102,8 @@ async def statistic(callback: types.CallbackQuery):
         f'Игр - *{user.total_games}*',
         f'Побед - *{user.total_wins}*',
         f'Ничьей - *{user.total_draws}*',
-        f'Поражений - *{user.total_defeats}*'
+        f'Поражений - *{user.total_defeats}*',
+        f'Винрейт - *{user.total_wins / (user.total_games or 1) * 100:.0f}%*',
     ))
     await callback.message.reply(
         message,
