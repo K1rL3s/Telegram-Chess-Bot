@@ -4,7 +4,7 @@ from aiogram.dispatcher.handler import CancelHandler
 from loguru import logger
 from httpx import RequestError
 
-from src.tg.utils.log_in_chat import log_in_chat
+from src.utils.tg.log_in_chat import log_in_chat
 
 
 def get_func_name(func):

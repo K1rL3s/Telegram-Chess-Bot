@@ -26,6 +26,13 @@ class Config:
     api_session = httpx.AsyncClient(follow_redirects=True, timeout=TIMEOUT)
 
 
+class Prefixes(Enum):
+    EDIT_PREFIX = 'edit_'
+    PREGAME_PREFIX = 'pregame_'
+    CHOOSE_COLOR_PREFIX = PREGAME_PREFIX + 'choose_color_'  # noqa
+    GAME_STATE_PREFIX = 'state_game_'
+
+
 class CallbackData(Enum):
     OPEN_MAIN_MENU = 'open_main_menu'
     OPEN_GAME_MENU = 'open_game_menu'
@@ -41,29 +48,29 @@ class CallbackData(Enum):
     START_EDIT_SETTING = 'start_edit_setting_'
     RESET_SETTING = 'reset_setting_'
     STOP_EDIT_SETTING = 'stop_edit_setting'
-    EDIT_PREFIX = 'edit_'
-    EDIT_MIN_TIME = EDIT_PREFIX + 'min_time'  # noqa
-    EDIT_MAX_TIME = EDIT_PREFIX + 'max_time'  # noqa
-    EDIT_THREADS = EDIT_PREFIX + 'threads'  # noqa
-    EDIT_DEPTH = EDIT_PREFIX + 'depth'  # noqa
-    EDIT_RAM_HASH = EDIT_PREFIX + 'ram_hash'  # noqa
-    EDIT_SKILL_LEVEL = EDIT_PREFIX + 'skill_level'  # noqa
-    EDIT_ELO = EDIT_PREFIX + 'elo'  # noqa
-    EDIT_COLORS = EDIT_PREFIX + 'colors'  # noqa
-    EDIT_WITH_COORDS = EDIT_PREFIX + 'with_coords'  # noqa
-    EDIT_SIZE = EDIT_PREFIX + 'size'  # noqa
+    EDIT_MIN_TIME = Prefixes.EDIT_PREFIX.value + 'min_time'
+    EDIT_MAX_TIME = Prefixes.EDIT_PREFIX.value + 'max_time'
+    EDIT_THREADS = Prefixes.EDIT_PREFIX.value + 'threads'
+    EDIT_DEPTH = Prefixes.EDIT_PREFIX.value + 'depth'
+    EDIT_RAM_HASH = Prefixes.EDIT_PREFIX.value + 'ram_hash'
+    EDIT_SKILL_LEVEL = Prefixes.EDIT_PREFIX.value + 'skill_level'
+    EDIT_ELO = Prefixes.EDIT_PREFIX.value + 'elo'
+    EDIT_COLORS = Prefixes.EDIT_PREFIX.value + 'colors'
+    EDIT_WITH_COORDS = Prefixes.EDIT_PREFIX.value + 'with_coords'
+    EDIT_SIZE = Prefixes.EDIT_PREFIX.value + 'size'
 
-    PLAY_OLD_GAME = 'play_old_game'
-    PLAY_NEW_GAME = 'play_new_game'
-    CHOOSE_COLOR_PREFIX = 'choose_color_'
-    COLOR_WHITE = CHOOSE_COLOR_PREFIX + 'w'  # noqa
-    COLOR_BLACK = CHOOSE_COLOR_PREFIX + 'b'  # noqa
+    PLAY_OLD_GAME = Prefixes.PREGAME_PREFIX.value + 'play_old_game'
+    PLAY_NEW_GAME = Prefixes.PREGAME_PREFIX.value + 'play_new_game'
 
-    GAME_STATE_PREFIX = 'state_game_'
-    GET_MOVE_TIP = GAME_STATE_PREFIX + 'get_move_tip'  # noqa
-    RESIGN = GAME_STATE_PREFIX + 'resign'  # noqa
+    COLOR_WHITE = Prefixes.CHOOSE_COLOR_PREFIX.value + 'w'
+    COLOR_BLACK = Prefixes.CHOOSE_COLOR_PREFIX.value + 'b'
+
+
+    GET_MOVE_TIP = Prefixes.GAME_STATE_PREFIX.value + 'get_move_tip'
+    RESIGN = Prefixes.GAME_STATE_PREFIX.value + 'resign'
+    GET_POSITION_EVALUATION = Prefixes.GAME_STATE_PREFIX.value + 'get_position_evaluation'
     RESIGN_SURE = RESIGN + '_sure'  # noqa
-    GET_POSITION_EVALUATION = GAME_STATE_PREFIX + 'get_position_evaluation'  # noqa
+
 
 
 class Emojies(Enum):

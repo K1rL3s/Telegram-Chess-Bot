@@ -20,14 +20,14 @@
 
 2. Склонировать репозиторий и перейти в него:
 
-```commandline
+```
 git clone https://github.com/K1rL3s/Telegram-Chess-Bot.git
 cd ./Telegram-Chess-Bot
 ```
 
 3. Создать и активировать виртуальное окружение:
 
-```commandline
+```
 # Windows:
 python -m venv venv
 venv\Scripts\activate.bat
@@ -39,7 +39,7 @@ source venv\Scripts\activate
 
 4. Установить все нужные библиотеки. 
 
-```commandline
+```
 pip install -r ./requirements.txt
 ```
 
@@ -58,7 +58,7 @@ GLOBAL_TOP=<int>
 
 6. Запустить бота:
 
-```commandline
+```
 python ./main.py
 ```
 

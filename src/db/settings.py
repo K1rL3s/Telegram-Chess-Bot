@@ -3,8 +3,8 @@ import datetime
 from sqlalchemy import Integer, DateTime, Column, Boolean, String, ForeignKey
 from sqlalchemy.orm import relationship
 
+from src.chess_api.get_limits import get_defaults
 from src.db.base_model import BaseModel
-from src.chess_api import get_defaults
 
 
 class Settings(BaseModel):

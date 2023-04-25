@@ -1,3 +1,4 @@
+import contextlib
 from pathlib import Path
 
 import sqlalchemy
@@ -36,8 +37,19 @@ def global_init(db_file: str | Path):
     SqlAlchemyBase.metadata.create_all(engine)
 
 
-def create_session() -> Session:
+@contextlib.contextmanager
+def create_session(do_commit: bool = False) -> Session:
     global __factory
     if not __factory:
         raise RuntimeError("Брат, а кто global_init вызывать будет?")
-    return __factory()
+
+    session = __factory()
+    try:
+        yield session
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        if do_commit:
+            session.commit()
+        session.close()

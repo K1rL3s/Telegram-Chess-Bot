@@ -1,12 +1,12 @@
 from aiogram import types, Dispatcher
 
 from src.consts import CallbackData
-from src.tg.keyboards import (
+from src.keyboards import (
     start_keyboard, main_menu_keyboard,
     back_to_main_menu_keyboard, get_main_menu_settings_game_keyboard,
     after_stats_keyboard,
 )
-from src.tg.utils.db_funcs import create_new_user, get_user, get_global_statistic
+from src.db.db_funcs import create_new_user, get_user, get_global_statistic
 
 about_message = """
 Привет! 👋

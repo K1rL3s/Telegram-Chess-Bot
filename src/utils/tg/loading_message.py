@@ -3,7 +3,7 @@ import asyncio
 from aiogram import types
 
 from src.consts import Config
-from src.tg.keyboards import get_main_menu_settings_game_keyboard
+from src.keyboards import get_main_menu_settings_game_keyboard
 
 
 class LoadingMessage:

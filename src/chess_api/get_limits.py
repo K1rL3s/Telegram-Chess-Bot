@@ -1,6 +1,8 @@
 from aiocache import cached
 
-from src.chess_api.utils import async_requests_catch, async_logger_wraps, abort
+from src.utils.chess_api.abort import abort
+from src.utils.chess_api.decorators import async_requests_catch, async_logger_wraps
+
 from src.consts import Config
 
 

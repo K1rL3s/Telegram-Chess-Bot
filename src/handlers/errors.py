@@ -3,7 +3,7 @@ from aiogram.utils.exceptions import MessageToEditNotFound
 from loguru import logger
 
 
-async def message_to_edit_not_found(update, error):
+async def message_to_edit_not_found(*_):
     """
     Юзер может удалить сообщение бота, пока бот грузит инфу,
     поэтому я так зачитерил. Хз, круто ли так делать.

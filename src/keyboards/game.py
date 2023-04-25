@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from src.db.games import Game
 from src.consts import CallbackData
-from src.tg.keyboards.universal import rules_help_button, main_menu_button, statistics_button
+from src.keyboards.universal import rules_help_button, main_menu_button, statistics_button
 
 
 continue_game_button = InlineKeyboardButton('⏯Продолжить игру', callback_data=CallbackData.PLAY_OLD_GAME.value)

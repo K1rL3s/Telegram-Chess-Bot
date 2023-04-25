@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.utils.exceptions import InvalidQueryID
 
-from src.tg.middlewares.base import MyBaseMiddleware
-from src.tg.utils.log_in_chat import log_in_chat
+from src.middlewares.base import MyBaseMiddleware
+from src.utils.tg.log_in_chat import log_in_chat
 
 
 class CallbackQueryMiddleware(MyBaseMiddleware):
@@ -11,7 +11,7 @@ class CallbackQueryMiddleware(MyBaseMiddleware):
     """
 
     @staticmethod
-    async def on_post_process_callback_query(callback: types.CallbackQuery, result, data: dict):
+    async def on_post_process_callback_query(callback: types.CallbackQuery, *_):
         try:
             await callback.answer()
         except InvalidQueryID as e:

@@ -11,7 +11,7 @@ class User(BaseModel):
 
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
     user_id = Column(Integer, nullable=False, unique=True, index=True)
-    name = Column(String, nullable=False)
+    name = Column(String(32), nullable=False)
     total_games = Column(Integer, default=0, nullable=False)
     total_wins = Column(Integer, default=0, nullable=False)
     total_defeats = Column(Integer, default=0, nullable=False)

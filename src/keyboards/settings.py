@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from src.consts import CallbackData
-from src.tg.keyboards.universal import main_menu_button
+from src.keyboards.universal import main_menu_button
 
 simple_settings_keyboard = InlineKeyboardMarkup().row(
     main_menu_button,

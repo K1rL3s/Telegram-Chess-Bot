@@ -3,8 +3,8 @@ from aiogram.dispatcher.handler import current_handler, CancelHandler
 from aiogram.utils.exceptions import Throttled
 from loguru import logger
 
-from src.tg.middlewares.base import MyBaseMiddleware
-from src.tg.utils.log_in_chat import log_in_chat
+from src.middlewares.base import MyBaseMiddleware
+from src.utils.tg.log_in_chat import log_in_chat
 
 
 class ThrottlingMiddleware(MyBaseMiddleware):
@@ -17,7 +17,7 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
 
-    async def on_process_message(self, message: types.Message | types.CallbackQuery, data: dict):
+    async def on_process_message(self, message: types.Message | types.CallbackQuery, *_):
         """
         Этот обработчик вызывается, когда диспетчер получает сообщение.
         """
@@ -50,7 +50,13 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         :param message: Сообщение.
         :param throttled: ?
         """
+
+        if isinstance(message, types.CallbackQuery):
+            logger.debug(f'Тротл callback "{message.data}" [{await self.get_short_info(message)}]')
+        elif isinstance(message, types.Message):
+            logger.debug(f'Тротл сообщение "{message.text}" [{await self.get_short_info(message)}]')
+
         if throttled.exceeded_count == 3:  # Число взял из головы
-            message = f'Наведение суеты: {self.get_short_info(message)}'
+            message = f'Наведение суеты: {await self.get_short_info(message)}'
             logger.info(message)
             await log_in_chat(message)

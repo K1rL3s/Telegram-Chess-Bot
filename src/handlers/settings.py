@@ -1,24 +1,17 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from src.chess_api import get_limits, get_defaults
+from src.chess_api.get_limits import get_limits, get_defaults
 from src.db.settings import Settings
-from src.consts import CallbackData, Emojies
-from src.tg.keyboards import (
+from src.consts import CallbackData, Emojies, Prefixes
+from src.keyboards import (
     simple_settings_keyboard, advanced_settings_keyboard, edit_setting_keyboard,
     cancel_edit_setting_keyboard, are_you_sure_reset_settings_keyboard,
     get_main_menu_settings_game_keyboard,
 )
-from src.tg.keyboards.universal import advanced_settings_button, settings_button
-from src.tg.utils.db_funcs import get_settings, update_settings
-
-
-class EditSetting(StatesGroup):
-    """
-    Группа состояний для отлавливания сообщения после начала изменения настройки.
-    """
-    edit_setting = State()
+from src.keyboards.universal import advanced_settings_button, settings_button
+from src.db.db_funcs import get_settings, update_settings
+from src.utils.tg.states import EditSetting
 
 
 # Названия простых и продвинутых настроек в базе данных
@@ -241,7 +234,7 @@ async def preview_setting(callback: types.CallbackQuery):
 
     message = await generate_setting_preview_message(
         callback.from_user.id,
-        attr := callback.data.lower().replace(CallbackData.EDIT_PREFIX.value, '')
+        attr := callback.data.lower().replace(Prefixes.EDIT_PREFIX.value, '')
     )
     await callback.message.reply(
         message,
@@ -397,7 +390,7 @@ def register_settings(dp: Dispatcher):
     )
     dp.register_callback_query_handler(
         preview_setting,
-        lambda callback: callback.data.startswith(CallbackData.EDIT_PREFIX.value)
+        lambda callback: callback.data.startswith(Prefixes.EDIT_PREFIX.value)
     )
     dp.register_callback_query_handler(
         start_state_edit_setting,

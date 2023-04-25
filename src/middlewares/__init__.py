@@ -1,9 +1,9 @@
 from aiogram import Dispatcher
 
-from src.tg.middlewares.throttling import ThrottlingMiddleware
-from src.tg.middlewares.callbacks import CallbackQueryMiddleware
-from src.tg.middlewares.logging import LoggingMiddleware
-from src.tg.middlewares.states import ChessGameStateMiddleware
+from src.middlewares.throttling import ThrottlingMiddleware
+from src.middlewares.callbacks import CallbackQueryMiddleware
+from src.middlewares.logging import LoggingMiddleware
+from src.middlewares.states import ChessGameStateMiddleware
 
 
 def setup_middlewares(dp: Dispatcher):
