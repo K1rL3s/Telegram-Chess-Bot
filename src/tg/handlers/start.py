@@ -11,7 +11,7 @@ from src.tg.utils.db_funcs import create_new_user, get_user, get_global_statisti
 about_message = """
 Привет! 👋
 Я [шахматный чат-бот проект](https://github.com/K1rL3s/Telegram-Chess-Bot) для Яндекс Лицея 2022/2023.
-Если я не отвечаю после открытия настроек или тому подобное, то напиши /start
+Если я не отвечаю при открытии настроек или тому подобное, то напиши /start
 """
 
 rules_help_message = """
@@ -34,7 +34,11 @@ async def start(message: types.Message):
 
     await create_new_user(
         message.from_user.id,
-        message.from_user.username or message.from_user.first_name or message.from_user.last_name  # XD
+        (
+            message.from_user.username or
+            message.from_user.first_name or
+            message.from_user.last_name
+        )  # XD
     )
     await message.reply(about_message, reply_markup=start_keyboard, parse_mode='markdown')
 
@@ -47,8 +51,8 @@ async def main_menu(message: types.Message | types.CallbackQuery):
     if isinstance(message, types.CallbackQuery):
         message = message.message
 
-    text = "Привет, я - *меню!*\n"\
-           "Если я не отвечаю после открытия настроек или тому подобное, то напиши /start"
+    text = "Привет, я - *меню!*\n" \
+           "Если я не отвечаю при открытии настроек или тому подобное, то напиши /start"
 
     await message.reply(
         text,

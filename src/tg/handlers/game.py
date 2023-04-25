@@ -28,24 +28,23 @@ class ChessGame(StatesGroup):
     playing = State()
 
 
-async def stop_game(user_id: int) -> str:
+async def stop_game(user_id: int, is_resign: bool = False) -> str:
     """
     Останавливает игру и возвращает сообщение с итогом.
     :param user_id: Юзер айди.
+    :param is_resign: Сдаётся ли пользователь.
     :return: Сообщение с итогом.
     """
 
-    evaluation = await stop_current_game(user_id)
+    evaluation = await stop_current_game(user_id, is_resign)
     message = 'Игра закончилась *{}!*'.format
 
-    if evaluation.end_type == 'checkmate':
-        if evaluation.is_end:  # Поставлен мат
-            return message(f"победой {'белых' if evaluation.who_win == 'w' else 'чёрных'}")
+    if evaluation.end_type == 'checkmate' and not evaluation.is_end:
+        text = f"победой {'белых' if evaluation.value > 0 else 'чёрных'} " \
+               f"(мат через {abs(evaluation.value)})"
+        return message(text)
 
-        # Мат будет через несколько ходов, для досрочного завершения игры
-        return message(f"победой {'белых' if evaluation.value > 0 else 'чёрных'} (mate in {abs(evaluation.value)})")
-
-    return message('ничьёй')
+    return message(f"победой {'белых' if evaluation.who_win == 'w' else 'чёрных'}")
 
 
 async def get_evaluation(callback: types.CallbackQuery, state: FSMContext):
@@ -168,9 +167,9 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     """
 
     if is_user_black:
-        move = ''
+        user_move = ''
     else:
-        move = ''.join(message.text.strip().lower().replace('-', '').split())
+        user_move = ''.join(message.text.strip().lower().replace('-', '').split())
 
     if isinstance(message, types.CallbackQuery):  # kostil
         loading_message = await create_loading_message(message.message, 'Получение хода движка...')
@@ -180,7 +179,7 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     game = get_current_game(message.from_user.id)
     settings = get_settings(message.from_user.id)
     data = await get_engine_move(
-        user_move=move,
+        user_move=user_move,
         prev_moves=game.prev_moves,
         orientation=game.orientation,
         **settings.get_params()
@@ -197,13 +196,13 @@ async def user_move(message: types.Message | types.CallbackQuery, state: FSMCont
     update_current_game(
         message.from_user.id,
         prev_moves=data.prev_moves,
-        last_move=data.stockfish_move,
+        last_move=data.stockfish_move or user_move,
         check=data.check,
         fen=data.fen,
     )
     image = await get_board_image(
         fen=data.fen,
-        last_move=data.stockfish_move,
+        last_move=data.stockfish_move or user_move,
         check=data.check,
         orientation=game.orientation,
         **settings.get_params()
@@ -268,7 +267,7 @@ async def resign(callback: types.CallbackQuery, state: FSMContext):
     await state.finish()
 
     loading_message = await create_loading_message(callback.message, 'Завершение игры...')
-    message = await stop_game(callback.from_user.id)
+    message = await stop_game(callback.from_user.id, resign=True)
     await loading_message.edit_text(
         message,
         parse_mode='markdown',

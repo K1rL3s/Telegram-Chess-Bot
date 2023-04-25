@@ -9,9 +9,16 @@ class MyBaseMiddleware(BaseMiddleware):
 
     @staticmethod
     def get_short_info(message: types.Message | types.CallbackQuery):
+        username = (message.from_user.username or
+                    message.from_user.first_name or
+                    message.from_user.last_name)  # XD
+
         if isinstance(message, types.Message):
-            return f'id={message.from_user.id}, chat={message.chat.id}, username={message.from_user.username}'
+            return f'id={message.from_user.id}, ' \
+                   f'chat={message.chat.id}, ' \
+                   f'username={username}'
+
         elif isinstance(message, types.CallbackQuery):
             return f'id={message.from_user.id}, ' \
                    f'chat={message.message.chat.id}, ' \
-                   f'username={message.from_user.username}'
+                   f'username={username}'

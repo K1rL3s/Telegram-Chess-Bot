@@ -98,21 +98,24 @@ def get_current_game(user_id: int) -> Game:
     return db_sess.scalar(query)
 
 
-async def stop_current_game(user_id: int) -> EngineEvaluation | None:
+async def stop_current_game(user_id: int, is_resign: bool = False) -> EngineEvaluation | None:
     """
     Останавливает текущую игру и возвращает оценку позиции от движка.
 
     :param user_id: Юзер айди.
+    :param is_resign: Сдаётся ли пользователь.
     :return: dict если игра есть, None если не юзер не играет.
     """
 
     db_sess = create_session()
-    current_game = get_current_game(user_id)
-    if not current_game:
+    game = get_current_game(user_id)
+    if not game:
         return None
 
-    evaluation = await get_engine_evaluation(fen=current_game.fen)
-    if evaluation.is_end:
+    evaluation = await get_engine_evaluation(fen=game.fen)
+    if is_resign:
+        who_win = 'w' if game.orientation == 'b' else 'b'
+    elif evaluation.is_end:
         who_win = evaluation.who_win
     elif evaluation.end_type == "checkmate":
         who_win = 'w' if evaluation.value > 0 else 'b'
@@ -135,9 +138,9 @@ async def stop_current_game(user_id: int) -> EngineEvaluation | None:
         User.user_id == user_id
     ).values(
         total_games=user.total_games + 1,
-        total_wins=user.total_wins + 1 if current_game.orientation == who_win else user.total_wins,
+        total_wins=user.total_wins + 1 if game.orientation == who_win else user.total_wins,
         total_defeats=(user.total_defeats + 1
-                       if who_win is not None and current_game.orientation != who_win
+                       if who_win is not None and game.orientation != who_win
                        else user.total_defeats),
         total_draws=user.total_draws + 1 if who_win is None else user.total_draws
     )
@@ -223,13 +226,25 @@ async def get_global_statistic() -> str:
 
     query = sa.select(User).order_by(
         sa.desc(User.total_wins),
-        sa.desc(User.total_games),
         User.created_time,
-    ).limit(Config.GLOBAL_TOP)
+    ).where(
+        User.total_games != 0,
+    ).limit(
+        Config.GLOBAL_TOP
+    )
+
     users = db_sess.scalars(query)
 
-    message = '\n'.join((
-        f'[{user.name}](tg://user?id={user.user_id}) - {user.total_wins} побед, {user.total_games} игр'
-        for user in users
-    ))
+    message = '\n'.join(
+        [
+            '*Ник/W/D/L/Total/WinRate*',
+            *(
+                f'[{user.name}](tg://user?id={user.user_id}) - '
+                f'{user.total_wins}/{user.total_draws}/{user.total_defeats}'
+                f'/{user.total_games} - {user.total_wins / user.total_games * 100:.0f}%'
+                for user in users
+            ),
+            f'\nСтатистика обновляется раз в *{Config.CACHE_GLOBAL_TOP} секунд*'
+        ]
+    )
     return message

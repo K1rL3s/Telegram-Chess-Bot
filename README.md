@@ -50,6 +50,10 @@ CHESS_TG_TOKEN=<tg-bot-token>
 API_URL=http://ip:port/api/chess/
 API_AUTH_KEY=<token>
 LOG_CHAT=<chat-id>
+UPS=<int>
+CACHE_LIMIT_REQUEST=<int>
+CACHE_GLOBAL_TOP=<int>
+GLOBAL_TOP=<int>
 ```
 
 6. Запустить бота:
