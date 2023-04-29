@@ -14,7 +14,7 @@ from src.keyboards import (
 )
 from src.db.db_funcs import (
     get_settings, get_current_game, create_new_game,
-    update_current_game, stop_current_game
+    update_current_game, stop_current_game,
 )
 from src.utils.tg.loading_message import create_loading_message
 from src.utils.tg.states import ChessGame
@@ -61,20 +61,28 @@ async def stop_game(user_id: int, is_resign: bool = False) -> str:
 
 
 @set_waiting_state
-async def get_evaluation(callback: types.CallbackQuery, state: FSMContext) -> None:
+async def get_evaluation(
+        callback: types.CallbackQuery,
+        state: FSMContext
+) -> None:
     """
     Даёт сообщение с оценкой позиции, обработчик кнопки "Оценка" во время игры.
     """
 
-    loading_message = await create_loading_message(callback.message, 'Получение оценки...')
+    loading_message = await create_loading_message(
+        callback.message, 'Получение оценки...'
+    )
 
     game = get_current_game(callback.from_user.id)
     evaluation = await get_engine_evaluation(fen=game.fen)
 
+    value = (evaluation.value / 100
+             if evaluation.end_type == "cp"
+             else evaluation.value)
     text = '\n'.join((
         f'*Оценка позиции*',
         f'Тип оценки: *{evaluation.end_type}*',
-        f'Значение: *{evaluation.value / 100 if evaluation.end_type == "cp" else evaluation.value}*',
+        f'Значение: *{value}*',
         f'W/D/L: *{" / ".join(map(str, evaluation.wdl))}*',
         f'[lichess.org](https://lichess.org/analysis/{game.fen}'
         f'?color={"white" if game.orientation == "w" else "black"})'
@@ -93,8 +101,10 @@ async def pre_game_menu(callback: types.CallbackQuery) -> None:
     """
 
     game = get_current_game(callback.from_user.id)
+    text = "*Игровое меню!*\n\n" \
+           "Выберите, что хотите увидеть, продолжить или начать."
     await callback.message.reply(
-        "*Игровое меню!*\n\nВыберите, что хотите увидеть, продолжить или начать.",
+        text,
         parse_mode='markdown',
         reply_markup=pre_game_keyboard(game)
     )
@@ -118,7 +128,9 @@ async def color_chosen(callback: types.CallbackQuery) -> None:
     Обработчик нажатия кнопок с выбором цвета.
     """
 
-    loading_message = await create_loading_message(callback.message, 'Создание новой игры...')
+    loading_message = await create_loading_message(
+        callback.message, 'Создание новой игры...'
+    )
 
     color = callback.data.replace(Prefixes.CHOOSE_COLOR_PREFIX.value, '')
     is_was_old_game = await create_new_game(callback.from_user.id, color)
@@ -141,13 +153,16 @@ async def color_chosen(callback: types.CallbackQuery) -> None:
 async def continue_old_game(callback: types.CallbackQuery) -> None:
     """
     Обработчик нажатия кнопки "Продолжить игру".
-    Используется функцией color_chosen для генерации первого сообщения при игре за белых.
+    Используется функцией color_chosen для генерации первого сообщения
+    при игре за белых.
     """
 
     if not (game := get_current_game(callback.from_user.id)):
         return
 
-    loading_message = await create_loading_message(callback.message, 'Загрузка доски...')
+    loading_message = await create_loading_message(
+        callback.message, 'Загрузка доски...'
+    )
 
     settings = get_settings(callback.from_user.id)
     image = await get_board_image(
@@ -180,7 +195,8 @@ async def user_move(
 ) -> None:
     """
     Обработчик сообщения с ходом.
-    Используется функцией color_chosen для генерации первого сообщения при игре за чёрных.
+    Используется функцией color_chosen для генерации первого сообщения
+    при игре за чёрных.
 
     is_user_black: Юзер играет за чёрных и это первый ход.
     """
@@ -191,9 +207,13 @@ async def user_move(
         move = ''.join(message.text.strip().lower().replace('-', '').split())
 
     if isinstance(message, types.CallbackQuery):  # kostil
-        loading_message = await create_loading_message(message.message, 'Получение хода движка...')
+        loading_message = await create_loading_message(
+            message.message, 'Получение хода движка...'
+        )
     else:
-        loading_message = await create_loading_message(message, 'Получение хода движка...')
+        loading_message = await create_loading_message(
+            message, 'Получение хода движка...'
+        )
 
     game = get_current_game(message.from_user.id)
     settings = get_settings(message.from_user.id)
@@ -254,7 +274,9 @@ async def move_tip(callback: types.CallbackQuery, state: FSMContext) -> None:
     """
 
     await state.set_state(ChessGame.waiting)
-    loading_message = await create_loading_message(callback.message, 'Получение хода движка...')
+    loading_message = await create_loading_message(
+        callback.message, 'Получение хода движка...'
+    )
 
     game = get_current_game(callback.from_user.id)
     settings = get_settings(callback.from_user.id)
@@ -285,7 +307,9 @@ async def resign(callback: types.CallbackQuery, state: FSMContext) -> None:
         )
         return
 
-    loading_message = await create_loading_message(callback.message, 'Завершение игры...')
+    loading_message = await create_loading_message(
+        callback.message, 'Завершение игры...'
+    )
     message = await stop_game(callback.from_user.id, is_resign=True)
     await loading_message.edit_text(
         message,
@@ -307,7 +331,8 @@ def register_game(dp: Dispatcher) -> None:
     )
     dp.register_callback_query_handler(
         color_chosen,
-        lambda callback: callback.data.startswith(Prefixes.CHOOSE_COLOR_PREFIX.value)
+        lambda callback: callback.data.startswith(
+            Prefixes.CHOOSE_COLOR_PREFIX.value)
     )
 
     dp.register_callback_query_handler(

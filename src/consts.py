@@ -23,7 +23,9 @@ class Config:
     TIMEOUT = 30
 
     api_headers = {"Authorization": os.environ['API_AUTH_KEY']}
-    api_session = httpx.AsyncClient(follow_redirects=True, timeout=TIMEOUT)
+    api_session = httpx.AsyncClient(
+        follow_redirects=True, timeout=TIMEOUT
+    )
 
 
 class Prefixes(Enum):
@@ -65,10 +67,10 @@ class CallbackData(Enum):
     COLOR_WHITE = Prefixes.CHOOSE_COLOR_PREFIX.value + 'w'
     COLOR_BLACK = Prefixes.CHOOSE_COLOR_PREFIX.value + 'b'
 
-
     GET_MOVE_TIP = Prefixes.GAME_STATE_PREFIX.value + 'get_move_tip'
     RESIGN = Prefixes.GAME_STATE_PREFIX.value + 'resign'
-    GET_POSITION_EVALUATION = Prefixes.GAME_STATE_PREFIX.value + 'get_position_evaluation'
+    GET_POSITION_EVALUATION = Prefixes.GAME_STATE_PREFIX.value + \
+                              'get_position_evaluation'
     RESIGN_SURE = RESIGN + '_sure'  # noqa
 
 

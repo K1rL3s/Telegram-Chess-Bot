@@ -2,7 +2,9 @@ from io import BytesIO
 
 from src.chess_api.get_limits import get_limits
 from src.utils.chess_api.abort import abort
-from src.utils.chess_api.decorators import async_requests_catch, async_logger_wraps
+from src.utils.chess_api.decorators import (
+    async_requests_catch, async_logger_wraps,
+)
 
 from src.consts import Config
 

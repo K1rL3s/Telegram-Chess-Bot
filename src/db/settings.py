@@ -11,20 +11,16 @@ class Settings(BaseModel):
     """
 
     Example of usage:
-    (`def create_new_user` from `src.tg.utils.db_funcs`)
-
-    db_sess = create_session()
-    settings = Settings(user_id=<int>)
-    await settings.async_init()
-    db_sess.add(settings)
-    db_sess.commit()
-
+    (`def create_new_user` from `src.db.db_funcs`)
     """
 
     __tablename__ = 'settings'
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, unique=True, index=True)
+    user_id = Column(
+        Integer, ForeignKey('users.id'),
+        nullable=False, unique=True, index=True
+    )
     min_time = Column(Integer, nullable=False)
     max_time = Column(Integer, nullable=False)
     threads = Column(Integer, nullable=False)
@@ -36,8 +32,10 @@ class Settings(BaseModel):
     with_coords = Column(Boolean, default=True, nullable=False)
     # with_position_evaluation = Column(Boolean, default=False, nullable=True)
     size = Column(Integer, nullable=False)
-    modified_time = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow,
-                           nullable=False)
+    modified_time = Column(
+        DateTime, default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow, nullable=False
+    )
 
     user = relationship('User', back_populates='settings')
 

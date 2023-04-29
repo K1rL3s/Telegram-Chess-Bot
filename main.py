@@ -33,7 +33,12 @@ def main():
     bot = Bot(token=Config.CHESS_TG_TOKEN)
     dp = Dispatcher(bot=bot, storage=MemoryStorage())
 
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup, timeout=Config.TIMEOUT)
+    executor.start_polling(
+        dp,
+        skip_updates=True,
+        on_startup=on_startup,
+        timeout=Config.TIMEOUT
+    )
 
 
 if __name__ == '__main__':

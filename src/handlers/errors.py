@@ -16,5 +16,9 @@ async def all_errors(update, error):
 
 
 def register_errors(dp: Dispatcher):
-    dp.register_errors_handler(message_to_edit_not_found, exception=MessageToEditNotFound)
-    dp.register_errors_handler(all_errors, exception=Exception)
+    dp.register_errors_handler(
+        message_to_edit_not_found, exception=MessageToEditNotFound
+    )
+    dp.register_errors_handler(
+        all_errors, exception=Exception
+    )

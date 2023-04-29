@@ -1,7 +1,9 @@
 from aiocache import cached
 
 from src.utils.chess_api.abort import abort
-from src.utils.chess_api.decorators import async_requests_catch, async_logger_wraps
+from src.utils.chess_api.decorators import (
+    async_requests_catch, async_logger_wraps,
+)
 
 from src.consts import Config
 
@@ -29,9 +31,13 @@ async def get_limits() -> dict[str, dict[str, int]]:
 async def get_defaults() -> dict[str, int]:
     """
     Возвращает серверные значения по умолчанию для шахматного движка.
-    Используется базой данных для заполнения значениями по умолчанию и сброса настроек.
+    Используется базой данных для заполнения значениями по умолчанию
+    и сброса настроек.
     """
 
-    defaults = {param: dct["default"] for param, dct in (await get_limits()).items()}
+    defaults = {
+        param: dct["default"]
+        for param, dct in (await get_limits()).items()
+    }
     defaults.update({'with_coords': True, 'colors': None})
     return defaults

@@ -41,7 +41,9 @@ async def create_new_game(user_id: int, orientation: str) -> bool:
     if orientation not in ('w', 'b'):
         raise ValueError('Цвет игрока должен быть "w" или "b"')
 
-    is_was_old_game = isinstance(await stop_current_game(user_id, is_resign=True), tuple)
+    is_was_old_game = isinstance(
+        await stop_current_game(user_id, is_resign=True), tuple
+    )
 
     with create_session(do_commit=True) as db_sess:
         game = Game(
@@ -98,7 +100,10 @@ def get_current_game(user_id: int) -> Game:
         return game
 
 
-async def stop_current_game(user_id: int, is_resign: bool = False) -> tuple[EngineEvaluation, str | None] | None:
+async def stop_current_game(
+        user_id: int,
+        is_resign: bool = False
+) -> tuple[EngineEvaluation, str | None] | None:
     """
     Останавливает текущую игру и возвращает оценку позиции от движка.
 
@@ -138,11 +143,16 @@ async def stop_current_game(user_id: int, is_resign: bool = False) -> tuple[Engi
             User.user_id == user_id
         ).values(
             total_games=user.total_games + 1,
-            total_wins=user.total_wins + 1 if game.orientation == who_win else user.total_wins,
+            total_wins=(user.total_wins + 1
+                        if game.orientation == who_win
+                        else user.total_wins),
             total_defeats=(user.total_defeats + 1
-                           if who_win is not None and game.orientation != who_win
+                           if who_win is not None
+                              and game.orientation != who_win
                            else user.total_defeats),
-            total_draws=user.total_draws + 1 if who_win is None else user.total_draws
+            total_draws=(user.total_draws + 1
+                         if who_win is None
+                         else user.total_draws)
         )
         db_sess.execute(query)
 
@@ -198,7 +208,12 @@ async def update_settings(user_id: int, **params) -> dict:
     limits = await get_limits()
     for param in params.keys():
         try:
-            params[param] = max(min(params[param], limits[param]["max"]), limits[param]["min"])
+            params[param] = max(
+                min(
+                    params[param], limits[param]["max"]
+                ),
+                limits[param]["min"]
+            )
         except KeyError:
             pass
 
@@ -229,16 +244,20 @@ async def get_global_statistic() -> str:
 
         users = db_sess.scalars(query)
 
+        line = "[{0}](tg://user?id={1}) - {2}/{3}/{4}/{5} - {6}%"
         message = '\n'.join(
             [
                 '*Ник - W/D/L/Total - WinRate*',
                 *(
-                    f'[{user.name}](tg://user?id={user.user_id}) - '
-                    f'{user.total_wins}/{user.total_draws}/{user.total_defeats}'
-                    f'/{user.total_games} - {user.total_wins / (user.total_games or 1) * 100:.0f}%'
+                    line.format(
+                        user.name, user.user_id, user.total_wins,
+                        user.total_draws, user.total_defeats, user.total_games,
+                        round(user.total_wins / (user.total_games or 1) * 100)
+                    )
                     for user in users
                 ),
-                f'\nСтатистика обновляется раз в *{Config.CACHE_GLOBAL_TOP} секунд*'
+                '\nСтатистика обновляется раз в '
+                f'*{Config.CACHE_GLOBAL_TOP} секунд*'
             ]
         )
 

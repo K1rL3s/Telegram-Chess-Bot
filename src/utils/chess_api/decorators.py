@@ -8,12 +8,17 @@ from src.utils.tg.log_in_chat import log_in_chat
 
 
 def get_func_name(func):
-    return getattr(func, 'func_name', None) or getattr(func, '__name__', None) or '<undefined>'
+    return (
+            getattr(func, 'func_name', None)
+            or getattr(func, '__name__', None)
+            or '<undefined>'
+    )
 
 
 def async_requests_catch(func):
     """
-    Декоратор для логирования и отлавливания ошибок при async запросах к шахматной апишке.
+    Декоратор для логирования
+    и отлавливания ошибок при async запросах к шахматной апишке.
     (Потому что ошибки километровые при запросах)
     """
 
@@ -30,10 +35,13 @@ def async_requests_catch(func):
             await log_in_chat(message)
 
             raise CancelHandler()
+
     return wrapper
 
 
-def async_logger_wraps(entry: bool = True, output: bool = True, level: str = "DEBUG"):
+def async_logger_wraps(
+        entry: bool = True, output: bool = True, level: str = "DEBUG"
+):
     """
     Логгер выполнения async функций.
 
@@ -49,10 +57,15 @@ def async_logger_wraps(entry: bool = True, output: bool = True, level: str = "DE
         async def wrapped(*args, **kwargs):
             logger_ = logger.opt(depth=1)
             if entry:
-                logger_.log(level, f'Вызов "{function_name}" (args={args}, kwargs={kwargs})')
+                logger_.log(
+                    level,
+                    f'Вызов "{function_name}" (args={args}, kwargs={kwargs})'
+                )
             result = await func(*args, **kwargs)
             if output:
-                logger_.log(level, f'Результат "{function_name}" (result={result})')
+                logger_.log(
+                    level, f'Результат "{function_name}" (result={result})'
+                )
             return result
 
         return wrapped

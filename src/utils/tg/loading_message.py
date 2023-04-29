@@ -13,7 +13,8 @@ class LoadingMessage:
     """
     Использовать `create_loading_message` для инициалзации!
 
-    Класс, который отправляет сообщение в ответ на действие, которое требует длительной работы сервера.
+    Класс, который отправляет сообщение в ответ на действие, 
+    которое требует длительной работы сервера.
     Временное сообщение обновляется классом, к нему добавляются точки.
     Потом текст сообщения редактируется на нужный или сообщение удаляется.
     """
@@ -24,7 +25,10 @@ class LoadingMessage:
         self.ups = ups
 
     async def async_init(self):
-        self.message = await self.reply_to.reply(f'*{self.text}*', parse_mode='markdown')
+        self.message = await self.reply_to.reply(
+            f'*{self.text}*',
+            parse_mode='markdown'
+        )
         self._future = asyncio.ensure_future(self._infity_update())
 
     async def _infity_update(self):
@@ -55,7 +59,10 @@ class LoadingMessage:
         else:
             self.text += '.'
 
-        await self.message.edit_text(f'*{self.text}*', parse_mode='markdown')
+        await self.message.edit_text(
+            f'*{self.text}*',
+            parse_mode='markdown'
+        )
 
     @property
     def edit_text(self):
@@ -79,7 +86,8 @@ async def create_loading_message(
         ups: int = Config.UPS,
 ) -> LoadingMessage:
     """
-    :param reply_to: Сообщение, на кнопку которого нажали / Сообщение юзера с ходом.
+    :param reply_to: Сообщение, на кнопку которого нажали /
+    Сообщение юзера с ходом.
     :param wait_message: Текст, который будет в сообщении при загрузке. Без *.
     :param ups: Сколько раз в секунду обновлять точки в конце сообщения.
     :return: Экземпляр класса LoadingMessage

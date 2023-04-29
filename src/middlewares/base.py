@@ -15,7 +15,9 @@ class MyBaseMiddleware(BaseMiddleware):
             user=types.User.get_current().id
         )
 
-    async def get_short_info(self, message: types.Message | types.CallbackQuery):
+    async def get_short_info(
+            self, message: types.Message | types.CallbackQuery
+    ):
         username = (message.from_user.username or
                     message.from_user.first_name or
                     message.from_user.last_name)  # XD

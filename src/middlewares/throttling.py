@@ -17,16 +17,21 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
 
-    async def on_process_message(self, message: types.Message | types.CallbackQuery, *_):
+    async def on_process_message(
+            self, message: types.Message | types.CallbackQuery, *_
+    ):
         """
         Этот обработчик вызывается, когда диспетчер получает сообщение.
         """
         handler = current_handler.get()  # Получаем текущий обработчик
         dispatcher = Dispatcher.get_current()  # Получаем диспетчер из контекста
-        # Если обработчик был настроен декоратором rate_limit, получаем ограничение скорости и ключ от обработчика
+        # Если обработчик был настроен декоратором rate_limit,
+        # получаем ограничение скорости и ключ от обработчика
         if handler:
             limit = getattr(handler, 'throttling_rate_limit', self.rate_limit)
-            key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")
+            key = getattr(
+                handler, 'throttling_key', f"{self.prefix}_{handler.__name__}"
+            )
         else:
             limit = self.rate_limit
             key = f"{self.prefix}_message"
@@ -34,16 +39,23 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         try:
             await dispatcher.throttle(key, rate=limit)
         except Throttled as t:
-            await self.message_throttled(message, t)  # Если произошёл троттлинг...
+            await self.message_throttled(
+                message, t
+            )  # Если произошёл троттлинг...
             raise CancelHandler()  # Отменяем обработку запроса.
 
-    async def on_process_callback_query(self, callback: types.CallbackQuery, data: dict):
+    async def on_process_callback_query(
+            self, callback: types.CallbackQuery, data: dict
+    ):
         """
         Этот обработчик вызывается, когда диспетчер получает сообщение.
         """
         await self.on_process_message(callback, data)
 
-    async def message_throttled(self, message: types.Message | types.CallbackQuery, throttled: Throttled):
+    async def message_throttled(
+            self, message: types.Message | types.CallbackQuery,
+            throttled: Throttled
+    ):
         """
         Действия на флуд в бота.
 
@@ -52,9 +64,13 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         """
 
         if isinstance(message, types.CallbackQuery):
-            logger.debug(f'Тротл callback "{message.data}" [{await self.get_short_info(message)}]')
+            logger.debug(
+                f'Тротл callback "{message.data}" [{await self.get_short_info(message)}]'
+            )
         elif isinstance(message, types.Message):
-            logger.debug(f'Тротл сообщение "{message.text}" [{await self.get_short_info(message)}]')
+            logger.debug(
+                f'Тротл сообщение "{message.text}" [{await self.get_short_info(message)}]'
+            )
 
         if throttled.exceeded_count == 3:  # Число взял из головы
             message = f'Наведение суеты: {await self.get_short_info(message)}'

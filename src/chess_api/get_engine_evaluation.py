@@ -20,7 +20,9 @@ async def get_engine_evaluation(
     """
 
     if not fen and not prev_moves:
-        raise RuntimeError("Хотя бы кого-то из них надо, можно нормально? Чё такое-то, а?")
+        raise RuntimeError(
+            "Хотя бы кого-то из них надо, можно нормально? Чё такое-то, а?"
+        )
 
     params = {
         "fen": fen,

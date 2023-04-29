@@ -20,7 +20,8 @@ async def get_engine_move(
     :param user_move: Ход пользователя.
     :param prev_moves: Предыдущие ходы (история ходов).
     :param orientation: За какой цвет играет пользователь.
-    :param params: Остальные параметры, такие как "threads", "depth", "ram_hash", "skill_level",
+    :param params: Остальные параметры, такие как "threads", "depth",
+    "ram_hash", "skill_level"...
     :return: Мощный намедтупле с ответом сервера. Если None - нелегальный ход.
     """
 

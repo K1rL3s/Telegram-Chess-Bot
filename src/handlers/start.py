@@ -8,11 +8,12 @@ from src.keyboards import (
 )
 from src.db.db_funcs import create_new_user, get_user, get_global_statistic
 
+
 about_message = """
 Привет! 👋
 Я [шахматный чат-бот проект](https://github.com/K1rL3s/Telegram-Chess-Bot) для Яндекс Лицея 2022/2023.
 Если я не отвечаю при открытии настроек или тому подобное, то напиши /start
-"""
+"""  # noqa
 
 rules_help_message = """
 Правила шахмат:
@@ -24,7 +25,7 @@ rules_help_message = """
 *q* - королева, *r* - ладья, *b* - слон, *n* - конь. 
 
 ...
-"""
+"""  # noqa
 
 
 async def start(message: types.Message):
@@ -35,12 +36,13 @@ async def start(message: types.Message):
     await create_new_user(
         message.from_user.id,
         (
-            message.from_user.username or
-            message.from_user.first_name or
-            message.from_user.last_name
+                message.from_user.username or
+                message.from_user.first_name or
+                message.from_user.last_name
         )  # XD
     )
-    await message.reply(about_message, reply_markup=start_keyboard, parse_mode='markdown')
+    await message.reply(about_message, reply_markup=start_keyboard,
+                        parse_mode='markdown')
 
 
 async def main_menu(message: types.Message | types.CallbackQuery):
@@ -52,7 +54,8 @@ async def main_menu(message: types.Message | types.CallbackQuery):
         message = message.message
 
     text = "Привет, я - *меню!*\n" \
-           "Если я не отвечаю при открытии настроек или тому подобное, то напиши /start"
+           "Если я не отвечаю при открытии настроек или тому подобное, " \
+           "то напиши /start"
 
     await message.reply(
         text,
@@ -128,16 +131,28 @@ async def global_statistic(callback: types.CallbackQuery):
 def register_start(dp: Dispatcher):
     dp.register_message_handler(start, commands=['start'])
 
-    dp.register_callback_query_handler(main_menu, text=CallbackData.OPEN_MAIN_MENU.value)
+    dp.register_callback_query_handler(
+        main_menu,
+        text=CallbackData.OPEN_MAIN_MENU.value
+    )
     dp.register_message_handler(main_menu, commands=['menu', 'меню'])
 
-    dp.register_callback_query_handler(about, text=CallbackData.ABOUT_BOT.value)
+    dp.register_callback_query_handler(
+        about,
+        text=CallbackData.ABOUT_BOT.value
+    )
     dp.register_message_handler(about, commands=['about'])
 
-    dp.register_callback_query_handler(rules_help, text=CallbackData.OPEN_RULES_HELP.value)
+    dp.register_callback_query_handler(
+        rules_help,
+        text=CallbackData.OPEN_RULES_HELP.value
+    )
     dp.register_message_handler(rules_help, commands=['rules', 'правила'])
 
-    dp.register_callback_query_handler(statistic, text=CallbackData.OPEN_STATISTIC.value)
+    dp.register_callback_query_handler(
+        statistic,
+        text=CallbackData.OPEN_STATISTIC.value
+    )
     dp.register_callback_query_handler(
         global_statistic,
         text=CallbackData.OPEN_GLOBAL_STATISTIC.value

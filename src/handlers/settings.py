@@ -5,7 +5,8 @@ from src.chess_api.get_limits import get_limits, get_defaults
 from src.db.settings import Settings
 from src.consts import CallbackData, Emojies, Prefixes
 from src.keyboards import (
-    simple_settings_keyboard, advanced_settings_keyboard, edit_setting_keyboard,
+    simple_settings_keyboard, advanced_settings_keyboard,
+    edit_setting_keyboard,
     cancel_edit_setting_keyboard, are_you_sure_reset_settings_keyboard,
     get_main_menu_settings_game_keyboard,
 )
@@ -65,7 +66,8 @@ attr_to_ru_with_description = {
     ),
     "size": (
         "Размер (пискели)",
-        "Размер изображения доски, которое присылает бот после своего хода\nМеняет изображение доски"
+        "Размер изображения доски, которое присылает бот после своего хода\n"
+        "Меняет изображение доски"
     )
 }
 
@@ -103,13 +105,17 @@ coord - 000000
 succes_edit_message = 'Значение *"{}"* успешно изменено на *{}*'.format
 
 
-def format_settings_value_by_attr(user_id: int, attr: str, settings: Settings = None, limit: int = 15) -> str:
+def format_settings_value_by_attr(user_id: int, attr: str,
+                                  settings: Settings = None,
+                                  limit: int = 15) -> str:
     """
-    Красивое отображение булевских значений настроек, принимается параметр настроек.
+    Красивое отображение булевских значений настроек,
+    принимается параметр настроек.
 
     :param user_id: Юзер айди.
     :param attr: Параметр настроек.
-    :param settings: Настройки пользователя, чтобы не вызывать get_settings много раз.
+    :param settings: Настройки пользователя,
+    чтобы не вызывать get_settings много раз.
     :param limit: Максимальная длина значения.
     :return: Красивое отображение.
     """
@@ -140,7 +146,9 @@ def format_settings_value(value: str | bool, limit: int = 15) -> str:
     return value
 
 
-def generate_settings_message(user_id: int, settings_attrs: tuple[str, ...] | list[str]) -> str:
+def generate_settings_message(user_id: int,
+                              settings_attrs: tuple[str, ...] | list[
+                                  str]) -> str:
     """
     Делает сообщение с настройками пользователя.
 
@@ -170,7 +178,10 @@ async def generate_setting_preview_message(user_id: int, attr: str) -> str:
     """
 
     name, desc = attr_to_ru_with_description[attr]
-    if isinstance(value := format_settings_value_by_attr(user_id, attr, limit=0), str):
+    if isinstance(
+        value := format_settings_value_by_attr(user_id, attr, limit=0),
+        str
+    ):
         message = (
             f'*{name}*',
             f'Текущее значение - *{value}*',
@@ -197,7 +208,8 @@ def edit_color_message_value(text: str):
     try:
         colors = ';'.join(
             [
-                f"{k[:20]}-{v.strip('# .,;:')[:8]}" for k, v in  # 20 - наибольший ключ, 8 - rrggbbaa
+                # 20 - наибольший ключ, 8 - rrggbbaa
+                f"{k[:20]}-{v.strip('# .,;:')[:8]}" for k, v in
                 [s.split(' - ') for s in text.splitlines() if s]
             ][:6]  # 6 - доступных ключей
         )
@@ -218,7 +230,9 @@ async def settings_menu(callback: types.CallbackQuery):
         settings_attrs = simple_settings
         settings_keyboard = simple_settings_keyboard
 
-    settings_message = generate_settings_message(callback.from_user.id, settings_attrs)
+    settings_message = generate_settings_message(
+        callback.from_user.id, settings_attrs
+    )
     message = '*Настройки!*\nТекущие настройки:\n\n' + settings_message
     await callback.message.reply(
         message,
@@ -251,29 +265,38 @@ async def reset_current_setting(callback: types.CallbackQuery):
     attr = callback.data.replace(CallbackData.RESET_SETTING.value, '').lower()
 
     default = (await get_defaults())[attr]
-    new_value = (await update_settings(callback.from_user.id, **{attr: default}))[attr]
+    new_value = (
+        await update_settings(callback.from_user.id, **{attr: default})
+    )[attr]
 
     name = attr_to_ru_with_description[attr][0]
-    setting_button = settings_button if attr in simple_settings else advanced_settings_button
+    setting_button = (settings_button
+                      if attr in simple_settings
+                      else advanced_settings_button)
 
     await callback.message.reply(
-            succes_edit_message(name, format_settings_value(new_value, limit=0)),
-            reply_markup=get_main_menu_settings_game_keyboard(setting_button),
-            parse_mode='markdown'
-        )
+        succes_edit_message(name, format_settings_value(new_value, limit=0)),
+        reply_markup=get_main_menu_settings_game_keyboard(setting_button),
+        parse_mode='markdown'
+    )
 
 
-async def start_state_edit_setting(callback: types.CallbackQuery, state: FSMContext):
+async def start_state_edit_setting(callback: types.CallbackQuery,
+                                   state: FSMContext):
     """
-    Обработчик нажатия кнопки "Изменить" при просмотре любого параметра настроек.
+    Обработчик нажатия кнопки "Изменить"
+    при просмотре любого параметра настроек.
     """
 
-    attr = callback.data.replace(CallbackData.START_EDIT_SETTING.value, '').lower()
+    attr = callback.data.replace(CallbackData.START_EDIT_SETTING.value,
+                                 '').lower()
 
     if 'color' in attr:
         message = edit_color_message
-    elif isinstance(format_settings_value_by_attr(callback.from_user.id, attr), str):
-        return await edit_bool_setting(callback.message, callback.from_user.id, attr)
+    elif isinstance(format_settings_value_by_attr(callback.from_user.id, attr),
+                    str):
+        return await edit_bool_setting(callback.message, callback.from_user.id,
+                                       attr)
     else:
         message = edit_setting_message
 
@@ -291,7 +314,8 @@ async def start_state_edit_setting(callback: types.CallbackQuery, state: FSMCont
 
 async def edit_bool_setting(message: types.Message, user_id: int, attr: str):
     """
-    Обработчик нажатия кнопки "Изменить" при просмотре параметра булевского типа.
+    Обработчик нажатия кнопки "Изменить"
+    при просмотре параметра булевского типа.
     """
 
     settings = get_settings(user_id)
@@ -313,7 +337,8 @@ async def edit_setting(message: types.Message, state: FSMContext):
 
     text = message.text.lower()
 
-    if isinstance(format_settings_value_by_attr(message.from_user.id, attr), str):
+    if isinstance(format_settings_value_by_attr(message.from_user.id, attr),
+                  str):
         if 'color' in attr:
             value = edit_color_message_value(message.text)
         else:
@@ -324,14 +349,18 @@ async def edit_setting(message: types.Message, state: FSMContext):
     name = attr_to_ru_with_description[attr][0]
     if value is None:
         await message.reply(
-            f'*{name}*\nНе удалось обработать это сообщение, попробуйте ещё раз',
+            f'*{name}*\n'
+            f'Не удалось обработать это сообщение, попробуйте ещё раз',
             reply_markup=cancel_edit_setting_keyboard,
             parse_mode='markdown'
         )
         return
 
-    new_value = (await update_settings(message.from_user.id, **{attr: value}))[attr]
-    setting_button = settings_button if attr in simple_settings else advanced_settings_button
+    new_value = (await update_settings(message.from_user.id, **{attr: value}))[
+        attr]
+    setting_button = (settings_button
+                      if attr in simple_settings
+                      else advanced_settings_button)
 
     await message.reply(
         succes_edit_message(name, format_settings_value(new_value, limit=0)),
@@ -342,7 +371,8 @@ async def edit_setting(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-async def cancel_state_edit_setting(callback: types.CallbackQuery, state: FSMContext):
+async def cancel_state_edit_setting(callback: types.CallbackQuery,
+                                    state: FSMContext):
     """
     Обработчик нажатия кнопки "Отмена" во время изменения любого параметра.
     """
@@ -350,7 +380,9 @@ async def cancel_state_edit_setting(callback: types.CallbackQuery, state: FSMCon
     async with state.proxy() as data:
         attr = data["attr"]
 
-    setting_button = settings_button if attr in simple_settings else advanced_settings_button
+    setting_button = (settings_button
+                      if attr in simple_settings
+                      else advanced_settings_button)
 
     await callback.message.reply(
         f'Изменение *"{attr_to_ru_with_description[attr][0]}"* отменено',
@@ -369,7 +401,8 @@ async def reset_all_settings(callback: types.CallbackQuery):
 
     if not is_sure:
         await callback.message.reply(
-            "Вы уверены, что хотите сбросить все настройки на значения по умолчанию?",
+            "Вы уверены, "
+            "что хотите сбросить все настройки на значения по умолчанию?",
             reply_markup=are_you_sure_reset_settings_keyboard
         )
         return
@@ -382,11 +415,14 @@ async def reset_all_settings(callback: types.CallbackQuery):
 
 
 def register_settings(dp: Dispatcher):
-    dp.register_callback_query_handler(cancel_state_edit_setting, state=EditSetting)
+    dp.register_callback_query_handler(cancel_state_edit_setting,
+                                       state=EditSetting)
 
     dp.register_callback_query_handler(
         settings_menu,
-        lambda callback: callback.data.startswith(CallbackData.OPEN_SETTINGS.value)
+        lambda callback: callback.data.startswith(
+            CallbackData.OPEN_SETTINGS.value
+        )
     )
     dp.register_callback_query_handler(
         preview_setting,
@@ -394,15 +430,21 @@ def register_settings(dp: Dispatcher):
     )
     dp.register_callback_query_handler(
         start_state_edit_setting,
-        lambda callback: callback.data.startswith(CallbackData.START_EDIT_SETTING.value)
+        lambda callback: callback.data.startswith(
+            CallbackData.START_EDIT_SETTING.value
+        )
     )
     dp.register_message_handler(edit_setting, state=EditSetting.edit_setting)
     dp.register_callback_query_handler(
         reset_current_setting,
-        lambda callback: callback.data.startswith(CallbackData.RESET_SETTING.value)
+        lambda callback: callback.data.startswith(
+            CallbackData.RESET_SETTING.value
+        )
     )
 
     dp.register_callback_query_handler(
         reset_all_settings,
-        lambda callback: callback.data.startswith(CallbackData.RESET_ALL_SETTINGS.value)
+        lambda callback: callback.data.startswith(
+            CallbackData.RESET_ALL_SETTINGS.value
+        )
     )

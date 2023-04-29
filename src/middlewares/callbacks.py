@@ -11,7 +11,9 @@ class CallbackQueryMiddleware(MyBaseMiddleware):
     """
 
     @staticmethod
-    async def on_post_process_callback_query(callback: types.CallbackQuery, *_):
+    async def on_post_process_callback_query(
+            callback: types.CallbackQuery, *_
+    ):
         try:
             await callback.answer()
         except InvalidQueryID as e:
