@@ -26,11 +26,11 @@ class MyBaseMiddleware(BaseMiddleware):
         if isinstance(message, types.Message):
             return f'id={message.from_user.id}, ' \
                    f'chat={message.chat.id}, ' \
-                   f'state={state}' \
+                   f'state={state}, ' \
                    f'username={username}'
 
         elif isinstance(message, types.CallbackQuery):
             return f'id={message.from_user.id}, ' \
                    f'chat={message.message.chat.id}, ' \
-                   f'state={state}' \
+                   f'state={state}, ' \
                    f'username={username}'

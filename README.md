@@ -31,7 +31,7 @@
    # Windows:
    python -m venv venv
    venv\Scripts\activate.bat
-   
+
    # Linux:
    python3 -m venv venv
    source venv\Scripts\activate
@@ -45,7 +45,7 @@
 
 5. Создать и заполнить файл `.env` в корневой папке (пример: `.env.example`):
 
-   ```env
+   ```
    CHESS_TG_TOKEN=<tg-bot-token>
    API_URL=http://ip:port/api/chess/
    API_AUTH_KEY=<token>
