@@ -16,50 +16,56 @@
 ### Запуск
 
 1. Установить **python** версии **3.10**+
-   (Тестировалось на версии **3.10.8**)
+    (Тестировалось на версии **3.10.8**)
 
 2. Склонировать репозиторий и перейти в него:
 
-   ```
-   git clone https://github.com/K1rL3s/Telegram-Chess-Bot.git
-   cd ./Telegram-Chess-Bot
-   ```
+    ```
+    git clone https://github.com/K1rL3s/Telegram-Chess-Bot.git
+    cd ./Telegram-Chess-Bot
+    ```
 
 3. Создать и активировать виртуальное окружение:
 
-   ```
-   # Windows:
-   python -m venv venv
-   venv\Scripts\activate.bat
+    ```
+    # Windows:
+    python -m venv venv
+    venv\Scripts\activate.bat
 
-   # Linux:
-   python3 -m venv venv
-   source venv\Scripts\activate
-   ```
+    # Linux:
+    virtualenv venv --no-setuptools
+    source venv\Scripts\activate
+    curl -O https://bootstrap.pypa.io/get-pip.py
+    python ./get-pip.py
+    ```
 
 4. Установить все нужные библиотеки. 
 
-   ```
-   pip install -r ./requirements.txt
-   ```
+    ```
+    # Windows:
+    pip install -r ./requirements.txt
+    
+    # Linux:
+    python -m pip install -r ./requirements.txt
+    ```
 
 5. Создать и заполнить файл `.env` в корневой папке (пример: `.env.example`):
 
-   ```
-   CHESS_TG_TOKEN=<tg-bot-token>
-   API_URL=http://ip:port/api/chess/
-   API_AUTH_KEY=<token>
-   LOG_CHAT=<chat-id>
-   UPS=<int>
-   CACHE_LIMIT_REQUEST=<int>
-   CACHE_GLOBAL_TOP=<int>
-   GLOBAL_TOP=<int>
-   ```
+    ```
+    CHESS_TG_TOKEN=<tg-bot-token>
+    API_URL=http://ip:port/api/chess/
+    API_AUTH_KEY=<token>
+    LOG_CHAT=<chat-id>
+    UPS=<int>
+    CACHE_LIMIT_REQUEST=<int>
+    CACHE_GLOBAL_TOP=<int>
+    GLOBAL_TOP=<int>
+    ```
 
 6. Запустить бота:
-   ```
-   python ./main.py
-   ```
+    ```
+    python ./main.py
+    ```
 
 ### Скриншоты работы
 ![Telegram_WIFil9xgVJ](https://user-images.githubusercontent.com/104463209/233860960-e93ebf81-3e7d-4117-b385-7782fa9ec99e.png)
