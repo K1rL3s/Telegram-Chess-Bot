@@ -79,14 +79,18 @@ async def get_evaluation(
     value = (evaluation.value / 100
              if evaluation.end_type == "cp"
              else evaluation.value)
-    text = '\n'.join((
-        f'*Оценка позиции*',
-        f'Тип оценки: *{evaluation.end_type}*',
-        f'Значение: *{value}*',
-        f'W/D/L: *{" / ".join(map(str, evaluation.wdl))}*',
-        f'[lichess.org](https://lichess.org/analysis/{game.fen}'
-        f'?color={"white" if game.orientation == "w" else "black"})'
-    ))
+    wdl = " / ".join(map(str, evaluation.wdl)) if evaluation.wdl else "-"
+
+    text = '\n'.join(
+        (
+            f'*Оценка позиции*',
+            f'Тип оценки: *{evaluation.end_type}*',
+            f'Значение: *{value}*',
+            f'W/D/L: *{wdl}*',
+            f'[lichess.org](https://lichess.org/analysis/{game.fen}'
+            f'?color={"white" if game.orientation == "w" else "black"})'
+        )
+    )
 
     await loading_message.edit_text(
         text,
@@ -248,9 +252,9 @@ async def user_move(
     )
 
     if data.end_type:
-        await state.finish()
         keyboard = game_end_keyboard
         caption = await stop_game(message.from_user.id)
+        await state.finish()
     else:
         keyboard = game_conitnue_keyboard
         caption = i_move_your_turn(data.stockfish_move)
@@ -332,7 +336,8 @@ def register_game(dp: Dispatcher) -> None:
     dp.register_callback_query_handler(
         color_chosen,
         lambda callback: callback.data.startswith(
-            Prefixes.CHOOSE_COLOR_PREFIX.value)
+            Prefixes.CHOOSE_COLOR_PREFIX.value
+        )
     )
 
     dp.register_callback_query_handler(
