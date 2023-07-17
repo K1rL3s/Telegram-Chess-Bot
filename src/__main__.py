@@ -17,10 +17,10 @@ async def on_startup(dp: Dispatcher):
 
 
 def main():
-    abs_path = Path().absolute()
+    abs_path = Path(__file__).parent.parent.absolute()
 
     logger.add(
-        abs_path / 'logs' / 'logs.log',
+        abs_path / 'src' / 'db' / 'db_files' / 'logs.log',
         format="{time:YYYY-MM-DD HH:mm:ss.SSS} {level:<7} {message}",
         level='DEBUG',
         rotation="00:00",
@@ -28,7 +28,9 @@ def main():
         # serialize=True
     )
 
-    db_session.global_init(abs_path / 'src' / 'db' / 'database.sqlite')
+    db_session.global_init(
+        abs_path / 'src' / 'db' / 'db_files' / 'database.sqlite'
+    )
 
     bot = Bot(token=Config.CHESS_TG_TOKEN)
     dp = Dispatcher(bot=bot, storage=MemoryStorage())

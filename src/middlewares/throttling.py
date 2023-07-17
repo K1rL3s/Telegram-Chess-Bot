@@ -23,8 +23,10 @@ class ThrottlingMiddleware(MyBaseMiddleware):
         """
         Этот обработчик вызывается, когда диспетчер получает сообщение.
         """
-        handler = current_handler.get()  # Получаем текущий обработчик
-        dispatcher = Dispatcher.get_current()  # Получаем диспетчер из контекста
+        # Получаем текущий обработчик
+        handler = current_handler.get()
+        # Получаем диспетчер из контекста
+        dispatcher = Dispatcher.get_current()
         # Если обработчик был настроен декоратором rate_limit,
         # получаем ограничение скорости и ключ от обработчика
         if handler:
@@ -65,11 +67,13 @@ class ThrottlingMiddleware(MyBaseMiddleware):
 
         if isinstance(message, types.CallbackQuery):
             logger.debug(
-                f'Тротл callback "{message.data}" [{await self.get_short_info(message)}]'
+                f'Тротл callback "{message.data}" '
+                f'[{await self.get_short_info(message)}]'
             )
         elif isinstance(message, types.Message):
             logger.debug(
-                f'Тротл сообщение "{message.text}" [{await self.get_short_info(message)}]'
+                f'Тротл сообщение "{message.text}" '
+                f'[{await self.get_short_info(message)}]'
             )
 
         if throttled.exceeded_count == 3:  # Число взял из головы

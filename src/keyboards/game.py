@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from src.db.games import Game
+from src.db.models.games import Game
 from src.consts import CallbackData
 from src.keyboards.universal import (
     rules_help_button, main_menu_button,

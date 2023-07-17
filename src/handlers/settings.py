@@ -2,7 +2,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 
 from src.chess_api.get_limits import get_limits, get_defaults
-from src.db.settings import Settings
+from src.db.models.settings import Settings
 from src.consts import CallbackData, Emojies, Prefixes
 from src.keyboards import (
     simple_settings_keyboard, advanced_settings_keyboard,
@@ -105,9 +105,11 @@ coord - 000000
 succes_edit_message = 'Значение *"{}"* успешно изменено на *{}*'.format
 
 
-def format_settings_value_by_attr(user_id: int, attr: str,
-                                  settings: Settings = None,
-                                  limit: int = 15) -> str:
+def format_settings_value_by_attr(
+        user_id: int, attr: str,
+        settings: Settings = None,
+        limit: int = 15
+) -> str:
     """
     Красивое отображение булевских значений настроек,
     принимается параметр настроек.
@@ -146,9 +148,11 @@ def format_settings_value(value: str | bool, limit: int = 15) -> str:
     return value
 
 
-def generate_settings_message(user_id: int,
-                              settings_attrs: tuple[str, ...] | list[
-                                  str]) -> str:
+def generate_settings_message(
+        user_id: int,
+        settings_attrs: tuple[str, ...] | list[
+            str]
+) -> str:
     """
     Делает сообщение с настройками пользователя.
 
@@ -281,22 +285,30 @@ async def reset_current_setting(callback: types.CallbackQuery):
     )
 
 
-async def start_state_edit_setting(callback: types.CallbackQuery,
-                                   state: FSMContext):
+async def start_state_edit_setting(
+        callback: types.CallbackQuery,
+        state: FSMContext
+):
     """
     Обработчик нажатия кнопки "Изменить"
     при просмотре любого параметра настроек.
     """
 
-    attr = callback.data.replace(CallbackData.START_EDIT_SETTING.value,
-                                 '').lower()
+    attr = callback.data.replace(
+        CallbackData.START_EDIT_SETTING.value,
+        ''
+    ).lower()
 
     if 'color' in attr:
         message = edit_color_message
-    elif isinstance(format_settings_value_by_attr(callback.from_user.id, attr),
-                    str):
-        return await edit_bool_setting(callback.message, callback.from_user.id,
-                                       attr)
+    elif isinstance(
+        format_settings_value_by_attr(callback.from_user.id, attr),
+        str
+    ):
+        return await edit_bool_setting(
+            callback.message, callback.from_user.id,
+            attr
+        )
     else:
         message = edit_setting_message
 
@@ -337,8 +349,10 @@ async def edit_setting(message: types.Message, state: FSMContext):
 
     text = message.text.lower()
 
-    if isinstance(format_settings_value_by_attr(message.from_user.id, attr),
-                  str):
+    if isinstance(
+        format_settings_value_by_attr(message.from_user.id, attr),
+        str
+    ):
         if 'color' in attr:
             value = edit_color_message_value(message.text)
         else:
@@ -371,8 +385,10 @@ async def edit_setting(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-async def cancel_state_edit_setting(callback: types.CallbackQuery,
-                                    state: FSMContext):
+async def cancel_state_edit_setting(
+        callback: types.CallbackQuery,
+        state: FSMContext
+):
     """
     Обработчик нажатия кнопки "Отмена" во время изменения любого параметра.
     """
@@ -415,8 +431,10 @@ async def reset_all_settings(callback: types.CallbackQuery):
 
 
 def register_settings(dp: Dispatcher):
-    dp.register_callback_query_handler(cancel_state_edit_setting,
-                                       state=EditSetting)
+    dp.register_callback_query_handler(
+        cancel_state_edit_setting,
+        state=EditSetting
+    )
 
     dp.register_callback_query_handler(
         settings_menu,

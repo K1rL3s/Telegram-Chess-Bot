@@ -9,7 +9,8 @@ from src.consts import Prefixes
 
 class ChessGameStateMiddleware(MyBaseMiddleware):
     """
-    Мидлварь, который отменяет состояние игры, если пользователь нажал на что-то,
+    Мидлварь, который отменяет состояние игры,
+    если пользователь нажал на что-то,
     не относящее к игре, или написал какую-то команду.
     Также ставит ChessGame.playing после обработки события с ChessGame.waiting.
     """
@@ -38,7 +39,8 @@ class ChessGameStateMiddleware(MyBaseMiddleware):
         if state.endswith('waiting'):
             await ChessGame.playing.set()
             logger.debug(
-                f'Возврат playing после waiting "{type_}" [{await self.get_short_info(obj)}]'
+                f'Возврат playing после waiting "{type_}" '
+                f'[{await self.get_short_info(obj)}]'
             )
 
     async def on_pre_process_callback_query(

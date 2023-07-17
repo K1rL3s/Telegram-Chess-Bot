@@ -1,3 +1,3 @@
-from .users import User
-from .games import Game
-from .settings import Settings
+from .models.users import User
+from .models.games import Game
+from .models.settings import Settings

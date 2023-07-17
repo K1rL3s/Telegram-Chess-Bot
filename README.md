@@ -15,17 +15,42 @@
 
 ### Запуск
 
-1. Установить **python** версии **3.10**+
-    (Тестировалось на версии **3.10.8**)
-
-2. Склонировать репозиторий и перейти в него:
+1. Склонировать репозиторий и перейти в него:
 
     ```
     git clone https://github.com/K1rL3s/Telegram-Chess-Bot.git
     cd ./Telegram-Chess-Bot
     ```
 
-3. Создать и активировать виртуальное окружение:
+2. Создать и заполнить файл `.env` в корневой папке (пример: `.env.example`):
+
+    ```
+    CHESS_TG_TOKEN=<tg-bot-token>
+    API_URL=http://ip:port/api/chess/
+    API_AUTH_KEY=<token>
+    LOG_CHAT=<chat-id>
+    UPS=<int>
+    CACHE_LIMIT_REQUEST=<int>
+    CACHE_GLOBAL_TOP=<int>
+    GLOBAL_TOP=<int>
+    ```
+
+- ### Docker
+
+1. Иметь установленный [Docker Engine](https://docs.docker.com/engine/)
+
+2. Собрать и запустить:
+
+   ```
+   docker compose up -d --build
+   ```
+
+- ### У себя
+
+1. Установить **python** версии **3.10**+
+    (Тестировалось на версии **3.10.8**)
+
+2. Создать и активировать виртуальное окружение:
 
     ```
     # Windows:
@@ -39,7 +64,7 @@
     python ./get-pip.py
     ```
 
-4. Установить все нужные библиотеки. 
+3. Установить все нужные библиотеки. 
 
     ```
     # Windows:
@@ -49,20 +74,7 @@
     python -m pip install -r ./requirements.txt
     ```
 
-5. Создать и заполнить файл `.env` в корневой папке (пример: `.env.example`):
-
-    ```
-    CHESS_TG_TOKEN=<tg-bot-token>
-    API_URL=http://ip:port/api/chess/
-    API_AUTH_KEY=<token>
-    LOG_CHAT=<chat-id>
-    UPS=<int>
-    CACHE_LIMIT_REQUEST=<int>
-    CACHE_GLOBAL_TOP=<int>
-    GLOBAL_TOP=<int>
-    ```
-
-6. Запустить бота:
+4. Запустить бота:
     ```
     python ./main.py
     ```

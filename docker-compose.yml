@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  bot:
+    image: chess-bot-image
+    container_name: chess-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "128M"
+    volumes:
+      - db_files:/app/src/database/db_files
+    env_file: .env
+    networks:
+      chess-network:
+
+
+volumes:
+  db_files:
+# Имя сети задано такое же, как у контейнера с апишкой
+networks:
+  chess-network:
+    external: false
+    name: chess-network

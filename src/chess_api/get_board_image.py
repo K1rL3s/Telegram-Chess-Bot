@@ -37,7 +37,8 @@ async def get_board_image(
         **params
     }
 
-    # По сути, никогда не случается, потому что вызов всегда с **Setings.get_params(), а там size всегда есть.
+    # По сути, никогда не случается,
+    # потому что вызов всегда с **Setings.get_params(), а там size всегда есть.
     if 'size' not in params.keys():
         params['size'] = (await get_limits())["size"]["max"]
 

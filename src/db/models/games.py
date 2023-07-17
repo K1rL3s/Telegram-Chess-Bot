@@ -4,7 +4,7 @@ from sqlalchemy import String, Integer, DateTime, Column, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 from src.consts import Config
-from src.db.base_model import BaseModel
+from src.db.models.base_model import BaseModel
 
 
 class Game(BaseModel):

@@ -143,16 +143,21 @@ async def stop_current_game(
             User.user_id == user_id
         ).values(
             total_games=user.total_games + 1,
-            total_wins=(user.total_wins + 1
-                        if game.orientation == who_win
-                        else user.total_wins),
-            total_defeats=(user.total_defeats + 1
-                           if who_win is not None
-                              and game.orientation != who_win
-                           else user.total_defeats),
-            total_draws=(user.total_draws + 1
-                         if who_win is None
-                         else user.total_draws)
+            total_wins=(
+                user.total_wins + 1
+                if game.orientation == who_win
+                else user.total_wins
+            ),
+            total_defeats=(
+                user.total_defeats + 1
+                if who_win is not None and game.orientation != who_win
+                else user.total_defeats
+            ),
+            total_draws=(
+                user.total_draws + 1
+                if who_win is None
+                else user.total_draws
+            )
         )
         db_sess.execute(query)
 

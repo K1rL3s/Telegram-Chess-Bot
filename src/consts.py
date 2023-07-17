@@ -10,19 +10,19 @@ load_dotenv()
 
 
 class Config:
-    CHESS_TG_TOKEN = os.environ["CHESS_TG_TOKEN"]
-    API_URL = os.environ["API_URL"]
-    LOG_CHAT = os.environ.get('LOG_CHAT')
-    UPS = int(os.environ.get('UPS') or 0)
-    CACHE_LIMIT_REQUEST = int(os.environ.get('CACHE_LIMIT_REQUEST') or 0)
-    CACHE_GLOBAL_TOP = int(os.environ.get('CACHE_GLOBAL_TOP') or 0)
-    GLOBAL_TOP = int(os.environ.get('GLOBAL_TOP') or 10)
+    CHESS_TG_TOKEN = os.getenv("CHESS_TG_TOKEN")
+    API_URL = os.getenv("API_URL")
+    LOG_CHAT = os.getenv('LOG_CHAT')
+    UPS = int(os.getenv('UPS') or 0)
+    CACHE_LIMIT_REQUEST = int(os.getenv('CACHE_LIMIT_REQUEST') or 0)
+    CACHE_GLOBAL_TOP = int(os.getenv('CACHE_GLOBAL_TOP') or 0)
+    GLOBAL_TOP = int(os.getenv('GLOBAL_TOP') or 10)
 
     # Начальная позиция в шахматах по FEN
     START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
     TIMEOUT = 30
 
-    api_headers = {"Authorization": os.environ['API_AUTH_KEY']}
+    api_headers = {"Authorization": os.getenv('API_AUTH_KEY')}
     api_session = httpx.AsyncClient(
         follow_redirects=True, timeout=TIMEOUT
     )
@@ -69,13 +69,12 @@ class CallbackData(Enum):
 
     GET_MOVE_TIP = Prefixes.GAME_STATE_PREFIX.value + 'get_move_tip'
     RESIGN = Prefixes.GAME_STATE_PREFIX.value + 'resign'
-    GET_POSITION_EVALUATION = Prefixes.GAME_STATE_PREFIX.value + \
-                              'get_position_evaluation'
+    GET_POSITION_EVALUATION = (
+            Prefixes.GAME_STATE_PREFIX.value + 'get_position_evaluation'
+    )
     RESIGN_SURE = RESIGN + '_sure'  # noqa
-
 
 
 class Emojies(Enum):
     YES_EMOJI = "✅"
     NO_EMOJI = "❌"
-

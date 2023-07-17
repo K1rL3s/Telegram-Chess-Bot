@@ -41,8 +41,10 @@ async def start(message: types.Message):
                 message.from_user.last_name
         )  # XD
     )
-    await message.reply(about_message, reply_markup=start_keyboard,
-                        parse_mode='markdown')
+    await message.reply(
+        about_message, reply_markup=start_keyboard,
+        parse_mode='markdown'
+    )
 
 
 async def main_menu(message: types.Message | types.CallbackQuery):
@@ -100,14 +102,17 @@ async def statistic(callback: types.CallbackQuery):
     """
 
     user = get_user(callback.from_user.id)
-    message = '\n'.join((
-        f'*Статистика!*\n',
-        f'Игр - *{user.total_games}*',
-        f'Побед - *{user.total_wins}*',
-        f'Ничьей - *{user.total_draws}*',
-        f'Поражений - *{user.total_defeats}*',
-        f'Винрейт - *{user.total_wins / (user.total_games or 1) * 100:.0f}%*',
-    ))
+    message = '\n'.join(
+        (
+            f'*Статистика!*\n',
+            f'Игр - *{user.total_games}*',
+            f'Побед - *{user.total_wins}*',
+            f'Ничьей - *{user.total_draws}*',
+            f'Поражений - *{user.total_defeats}*',
+            f'Винрейт - '
+            f'*{user.total_wins / (user.total_games or 1) * 100:.0f}%*',
+        )
+    )
     await callback.message.reply(
         message,
         parse_mode='markdown',
